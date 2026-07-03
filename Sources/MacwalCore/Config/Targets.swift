@@ -16,23 +16,54 @@ public enum MacwalTarget: String, CaseIterable, Codable, Sendable {
     case shell
     case obsidian
     case chrome
+    case firefox
+    case librewolf
+    case zen
+    case floorp
     case safari
     case spotify
+    case alacritty
+    case kitty
+    case wezterm
+    case ghostty
+    case iterm2
+    case vscode
+    case zed
+    case vim
+    case neovim
+    case tmux
+    case starship
+    case bat
+    case btop
+    case yazi
+    case fzf
+    case lazygit
+    case aerospace
+    case yabai
+    case sketchybar
+    case jankyBorders = "janky-borders"
+    case hammerspoon
+    case raycast
+    case alfred
+    case discord
+    case thunderbird
+    case telegram
+    case slack
     case finder
 
     public var classification: AdapterClassification {
         switch self {
-        case .shell:
+        case .shell, .alacritty, .kitty, .wezterm, .ghostty, .vim, .neovim, .tmux, .starship, .bat, .btop, .yazi, .fzf, .lazygit, .hammerspoon:
             .supported
         case .terminal:
             .supportedPrivateMixed
-        case .obsidian:
+        case .obsidian, .firefox, .librewolf, .zen, .floorp, .thunderbird, .iterm2, .vscode, .zed:
             .supportedAppConfig
-        case .chrome:
+        case .chrome, .raycast, .alfred, .discord, .telegram, .slack:
             .manual
         case .safari:
             .supportedSystemInheritanceOnly
-        case .spotify:
+        case .spotify, .aerospace, .yabai, .sketchybar, .jankyBorders:
             .external
         case .system, .finder:
             .private
@@ -43,7 +74,7 @@ public enum MacwalTarget: String, CaseIterable, Codable, Sendable {
         switch self {
         case .shell, .terminal, .obsidian, .chrome:
             true
-        case .system, .safari, .spotify, .finder:
+        case .system, .firefox, .librewolf, .zen, .floorp, .safari, .spotify, .alacritty, .kitty, .wezterm, .ghostty, .iterm2, .vscode, .zed, .vim, .neovim, .tmux, .starship, .bat, .btop, .yazi, .fzf, .lazygit, .aerospace, .yabai, .sketchybar, .jankyBorders, .hammerspoon, .raycast, .alfred, .discord, .thunderbird, .telegram, .slack, .finder:
             false
         }
     }
@@ -56,6 +87,14 @@ public enum MacwalTarget: String, CaseIterable, Codable, Sendable {
         switch self {
         case .spotify:
             "spicetify"
+        case .yabai:
+            "yabai"
+        case .sketchybar:
+            "sketchybar"
+        case .jankyBorders:
+            "borders"
+        case .aerospace:
+            "aerospace"
         default:
             nil
         }
@@ -71,10 +110,72 @@ public enum MacwalTarget: String, CaseIterable, Codable, Sendable {
             "Writes CSS snippets to configured vaults."
         case .chrome:
             "Generates a Manifest V3 theme folder; Chrome has no supported per-user silent activation API."
+        case .firefox:
+            "Writes Firefox profile userChrome/userContent CSS and user.js preferences; Firefox restart required."
+        case .librewolf:
+            "Writes LibreWolf profile CSS and user.js preferences; restart required."
+        case .zen:
+            "Writes Zen Browser profile CSS and user.js preferences; restart required."
+        case .floorp:
+            "Writes Floorp profile CSS and user.js preferences; restart required."
         case .safari:
             "No direct browser chrome theming; Safari inherits system appearance."
         case .spotify:
             "Requires Spicetify and writes a Spicetify theme."
+        case .alacritty:
+            "Writes Alacritty TOML colors and attempts to add an import."
+        case .kitty:
+            "Writes Kitty color config, includes it from kitty.conf, and attempts live reload."
+        case .wezterm:
+            "Writes a WezTerm Lua color scheme."
+        case .ghostty:
+            "Writes a Ghostty theme file and selects it from config."
+        case .iterm2:
+            "Writes an iTerm2 Dynamic Profile color scheme."
+        case .vscode:
+            "Writes a VS Code theme extension and selects it when settings.json is valid JSON."
+        case .zed:
+            "Writes a Zed theme JSON file."
+        case .vim:
+            "Writes a Vim colorscheme and enables it from .vimrc."
+        case .neovim:
+            "Writes a Neovim colorscheme and enables it from init.vim or init.lua."
+        case .tmux:
+            "Writes a tmux theme file, sources it from tmux.conf, and attempts reload."
+        case .starship:
+            "Writes a Starship palette fragment."
+        case .bat:
+            "Writes a bat theme and configures bat to use it."
+        case .btop:
+            "Writes a btop theme and configures btop to use it."
+        case .yazi:
+            "Writes a Yazi theme file."
+        case .fzf:
+            "Writes fzf color exports and sources them from common shell rc files."
+        case .lazygit:
+            "Writes a Lazygit theme config when no existing config would be overwritten."
+        case .aerospace:
+            "Writes an AeroSpace color fragment for user config integration."
+        case .yabai:
+            "Runs yabai border-color commands when yabai is available."
+        case .sketchybar:
+            "Runs sketchybar color commands when sketchybar is available."
+        case .jankyBorders:
+            "Runs janky borders color commands when borders is available."
+        case .hammerspoon:
+            "Writes Hammerspoon Lua colors and loads them from init.lua."
+        case .raycast:
+            "Generates Raycast palette assets only; Raycast theme activation is not file-configurable."
+        case .alfred:
+            "Generates Alfred palette assets only; automatic activation is not implemented."
+        case .discord:
+            "Writes Vencord/BetterDiscord CSS theme files when theme folders exist."
+        case .thunderbird:
+            "Writes Thunderbird profile userChrome CSS and user.js preferences; restart required."
+        case .telegram:
+            "Generates Telegram Desktop theme assets only; activation remains manual."
+        case .slack:
+            "Generates Slack palette assets only; Slack does not expose stable theme dotfiles."
         case .system:
             "Private macOS defaults and notifications; opt-in only."
         case .finder:

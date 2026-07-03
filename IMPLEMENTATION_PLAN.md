@@ -85,7 +85,10 @@ macwal list-targets [--json]
 `TARGETS` must be a comma-separated list from this set:
 
 ```text
-system,terminal,shell,obsidian,chrome,safari,spotify,finder
+system,terminal,shell,obsidian,chrome,firefox,librewolf,zen,floorp,safari,spotify,
+alacritty,kitty,wezterm,ghostty,iterm2,vscode,zed,vim,neovim,tmux,starship,bat,
+btop,yazi,fzf,lazygit,aerospace,yabai,sketchybar,janky-borders,hammerspoon,
+raycast,alfred,discord,thunderbird,telegram,slack,finder
 ```
 
 `all` must expand to every adapter whose prerequisites are available, excluding `private` adapters unless `--allow-private` is present.
@@ -97,8 +100,14 @@ system,terminal,shell,obsidian,chrome,safari,spotify,finder
 | `shell` | supported | yes | no | no | Writes generated shell/theme files under app support only. |
 | `terminal` | supported/private mixed | yes | no | no | Generates and installs a `.terminal` profile as the default profile, with backup and restore. |
 | `obsidian` | supported app config | yes when vaults found | no | no | Writes CSS snippet files and enables the generated snippet in `appearance.json`. |
-| `chrome` | manual/supported extension format | yes | no | no | Generates MV3 theme folder. Chrome has no supported per-user silent activation API for unpacked themes. |
+| `chrome` | manual | yes | no | no | Generates MV3 theme folder. Chrome has no supported per-user silent activation API for unpacked themes. |
+| `firefox`, `librewolf`, `zen`, `floorp`, `thunderbird` | supported app config | no | no | no | Writes profile chrome CSS and `user.js`; restart required. |
 | `spotify` | external | no | no | `spicetify` | Writes Spicetify theme and runs `spicetify apply`. |
+| `alacritty`, `kitty`, `wezterm`, `ghostty`, `iterm2` | supported / supported app config | no | no | optional app CLIs | Writes terminal color configs; reloads where a stable command exists. |
+| `vscode`, `zed`, `vim`, `neovim` | supported / supported app config | no | no | no | Writes editor theme files and managed config imports where safe. |
+| `tmux`, `starship`, `bat`, `btop`, `yazi`, `fzf`, `lazygit` | supported / supported app config | no | no | optional app CLIs | Writes TUI/CLI theme files and imports where safe. |
+| `aerospace`, `yabai`, `sketchybar`, `janky-borders`, `hammerspoon` | supported / external | no | no | optional app CLIs | Writes desktop-tool color fragments and runs available runtime commands. |
+| `raycast`, `alfred`, `discord`, `telegram`, `slack` | manual | no | no | no | Generates palette assets or mod-client CSS where silent activation is not stable. |
 | `safari` | supported system inheritance only | no | no | no | No direct Safari chrome theming. Reports inherited system effects. |
 | `system` | private | no | yes | no | Writes accent/highlight/light-dark preferences and posts notifications. |
 | `finder` | private | no | yes | no | Tahoe folder defaults and selected folder xattrs only. |
@@ -301,7 +310,7 @@ If `config.json` is missing, `macwal` must create it with defaults when a comman
 ### Acceptance Criteria
 
 - `macwal list-targets --json` returns valid JSON.
-- `macwal list-targets --json` includes all eight targets: `system`, `terminal`, `shell`, `obsidian`, `chrome`, `safari`, `spotify`, `finder`.
+- `macwal list-targets --json` includes every target listed in the target classification matrix.
 - Passing an unknown target such as `macwal apply --targets nope` exits with status `1`.
 - Passing `--allow-private` to a command that does not use private adapters is accepted and reported in JSON metadata.
 - `macwal apply --targets system --dry-run` does not write any file or preference.
@@ -613,7 +622,7 @@ This adapter is private and must be disabled unless `--allow-private` is present
 - `macwal apply --targets system` without `--allow-private` exits with status `3` and performs no writes.
 - `macwal apply --targets system --allow-private --dry-run --json` lists exact preference domains and keys it would write.
 - Before any actual system write, original values are backed up.
-- Accent mapping is deterministic and unit-tested for all eight target colors.
+- Accent mapping is deterministic and unit-tested for the supported macOS accent palette.
 - If setting a color fails, the adapter reports failure and does not continue to later system writes.
 - `macwal restore --targets system --allow-private` restores original preference values.
 - No app processes are killed unless a future explicit `--restart-apps` flag is implemented.

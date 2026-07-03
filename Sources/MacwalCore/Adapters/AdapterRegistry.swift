@@ -37,6 +37,8 @@ public struct AdapterRegistry {
                 return ObsidianAdapter(paths: paths, config: config.adapters.obsidian, fileSystem: fileSystemFor(target: .obsidian), backupManager: backupManager(for: .obsidian)).preview()
             case .chrome:
                 return ChromeAdapter(paths: paths, fileSystem: fileSystemFor(target: .chrome), backupManager: backupManager(for: .chrome)).preview()
+            case .firefox, .librewolf, .zen, .floorp, .alacritty, .kitty, .wezterm, .ghostty, .iterm2, .vscode, .zed, .vim, .neovim, .tmux, .starship, .bat, .btop, .yazi, .fzf, .lazygit, .aerospace, .yabai, .sketchybar, .jankyBorders, .hammerspoon, .raycast, .alfred, .discord, .thunderbird, .telegram, .slack:
+                return GeneratedAppAdapter(target: target, paths: paths, fileSystem: fileSystemFor(target: target), backupManager: backupManager(for: target), commandExecutor: commandExecutor).preview()
             case .safari:
                 return AdapterPlan(
                     target: .safari,
@@ -68,6 +70,8 @@ public struct AdapterRegistry {
                 summaries.append(try ObsidianAdapter(paths: paths, config: config.adapters.obsidian, fileSystem: fileSystemFor(target: .obsidian), backupManager: backupManager(for: .obsidian)).apply(palette: palette, dryRun: dryRun))
             case .chrome:
                 summaries.append(try ChromeAdapter(paths: paths, fileSystem: fileSystemFor(target: .chrome), backupManager: backupManager(for: .chrome)).apply(palette: palette, dryRun: dryRun))
+            case .firefox, .librewolf, .zen, .floorp, .alacritty, .kitty, .wezterm, .ghostty, .iterm2, .vscode, .zed, .vim, .neovim, .tmux, .starship, .bat, .btop, .yazi, .fzf, .lazygit, .aerospace, .yabai, .sketchybar, .jankyBorders, .hammerspoon, .raycast, .alfred, .discord, .thunderbird, .telegram, .slack:
+                summaries.append(try GeneratedAppAdapter(target: target, paths: paths, fileSystem: fileSystemFor(target: target), backupManager: backupManager(for: target), commandExecutor: commandExecutor).apply(palette: palette, dryRun: dryRun))
             case .safari:
                 summaries.append(AdapterApplySummary(
                     target: .safari,
@@ -97,6 +101,8 @@ public struct AdapterRegistry {
         switch target {
         case .shell, .chrome:
             [paths.appSupport]
+        case .firefox, .librewolf, .zen, .floorp, .alacritty, .kitty, .wezterm, .ghostty, .iterm2, .vscode, .zed, .vim, .neovim, .tmux, .starship, .bat, .btop, .yazi, .fzf, .lazygit, .aerospace, .yabai, .sketchybar, .jankyBorders, .hammerspoon, .raycast, .alfred, .discord, .thunderbird, .telegram, .slack:
+            GeneratedAppAdapter.writeRoots(for: target, paths: paths)
         case .terminal:
             [paths.appSupport, paths.cache]
         case .obsidian:

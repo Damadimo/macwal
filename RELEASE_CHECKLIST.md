@@ -110,6 +110,25 @@ Acceptance criteria:
 - Manifest loads as an unpacked extension.
 - No Chrome profile preferences are modified.
 
+#### Firefox-Family Browsers and Thunderbird
+
+- [ ] Test `firefox` on a profile with existing `userChrome.css`, `userContent.css`, and `user.js`.
+- [ ] Test `firefox` on a profile without a `chrome/` directory.
+- [ ] Test `librewolf`, `zen`, `floorp`, and `thunderbird` when available.
+- [ ] Run `macwal apply --targets firefox --image PATH`.
+- [ ] Confirm `chrome/macwal.css` is written in the detected profile.
+- [ ] Confirm `userChrome.css` and `userContent.css` import `macwal.css`.
+- [ ] Confirm `user.js` enables `toolkit.legacyUserProfileCustomizations.stylesheets`.
+- [ ] Quit and reopen the app and confirm chrome colors apply.
+- [ ] Run `macwal restore --targets firefox`.
+
+Acceptance criteria:
+
+- Existing profile CSS and `user.js` content is preserved outside managed blocks.
+- Profiles are discovered from `profiles.ini` and no unrelated profile roots are written.
+- Restore removes generated files or restores previous profile files.
+- Documentation clearly states restart is required.
+
 #### Safari
 
 - [ ] Run `macwal apply --targets safari --json`.
@@ -133,6 +152,83 @@ Acceptance criteria:
 - Missing Spicetify exits with status `2`.
 - Apply runs the expected Spicetify commands.
 - Restore returns generated files/settings to their prior state as implemented.
+
+#### Terminal Apps
+
+- [ ] Run `macwal apply --targets alacritty,kitty,wezterm,ghostty,iterm2 --image PATH`.
+- [ ] Confirm Alacritty imports `~/.config/alacritty/macwal.toml`.
+- [ ] Confirm Kitty includes `macwal.conf` and live reload succeeds when Kitty remote control is available.
+- [ ] Confirm WezTerm writes `macwal.lua` without overwriting an existing `wezterm.lua`.
+- [ ] Confirm Ghostty selects `theme = macwal`.
+- [ ] Confirm iTerm2 loads the Dynamic Profile.
+- [ ] Run `macwal restore --targets alacritty,kitty,wezterm,ghostty,iterm2`.
+
+Acceptance criteria:
+
+- Generated terminal palettes include background, foreground, cursor, selection, and all ANSI colors.
+- Existing config files are restored exactly.
+- Runtime reload commands are best-effort and do not fail the whole apply when the tool is absent.
+
+#### Editors
+
+- [ ] Run `macwal apply --targets vscode,zed,vim,neovim --image PATH`.
+- [ ] Confirm VS Code theme extension is generated and `workbench.colorTheme` is set when `settings.json` is valid JSON or absent.
+- [ ] Confirm Zed theme JSON is written.
+- [ ] Confirm Vim and Neovim colorschemes are written and enabled by managed config blocks.
+- [ ] Run `macwal restore --targets vscode,zed,vim,neovim`.
+
+Acceptance criteria:
+
+- Existing editor configs are preserved outside managed blocks.
+- Invalid VS Code settings JSON is not overwritten.
+- Restore removes generated themes or restores pre-existing files.
+
+#### CLI and TUI Apps
+
+- [ ] Run `macwal apply --targets tmux,starship,bat,btop,yazi,fzf,lazygit --image PATH`.
+- [ ] Confirm tmux config sources `macwal.tmux` and reloads when tmux is available.
+- [ ] Confirm Starship palette fragment is generated.
+- [ ] Confirm bat theme is selected and cache build runs when `bat` is available.
+- [ ] Confirm btop selects `color_theme = "macwal"`.
+- [ ] Confirm Yazi theme file is written.
+- [ ] Confirm fzf shell export is sourced from `~/.zshrc` and from `~/.bashrc` only if it exists.
+- [ ] Confirm Lazygit does not overwrite an existing config and instead writes a merge file.
+- [ ] Run `macwal restore --targets tmux,starship,bat,btop,yazi,fzf,lazygit`.
+
+Acceptance criteria:
+
+- Every target writes only documented user-owned config paths.
+- Existing config files are restored exactly.
+- Missing optional executables do not make generated file writes fail.
+
+#### macOS Desktop Tools
+
+- [ ] Run `macwal apply --targets aerospace,yabai,sketchybar,janky-borders,hammerspoon --image PATH`.
+- [ ] Confirm AeroSpace palette fragment is generated.
+- [ ] Confirm yabai border colors are applied when `yabai` is available.
+- [ ] Confirm SketchyBar bar/icon/label colors are applied when `sketchybar` is available.
+- [ ] Confirm janky-borders colors are applied when `borders` is available.
+- [ ] Confirm Hammerspoon loads `macwal.lua` and reloads when `hs` is available.
+- [ ] Run `macwal restore --targets aerospace,yabai,sketchybar,janky-borders,hammerspoon`.
+
+Acceptance criteria:
+
+- Missing optional desktop-tool CLIs are reported without failing generated file writes.
+- Runtime commands use palette colors in the expected app-specific formats.
+- Restore removes generated fragments and restores pre-existing config files.
+
+#### Generated Asset Targets
+
+- [ ] Run `macwal apply --targets raycast,alfred,discord,telegram,slack --image PATH`.
+- [ ] Confirm Raycast, Alfred, Telegram, and Slack palette assets are generated under app support.
+- [ ] Confirm Discord CSS is written for Vencord and BetterDiscord theme directories.
+- [ ] Run `macwal restore --targets raycast,alfred,discord,telegram,slack`.
+
+Acceptance criteria:
+
+- Documentation does not claim silent activation for Raycast, Alfred, Telegram, or Slack.
+- Discord docs state that Vencord/BetterDiscord must load the generated theme.
+- Restore removes generated assets or restores pre-existing files.
 
 #### System
 
@@ -180,6 +276,9 @@ Acceptance criteria:
 - [x] Add restore tests for absent files.
 - [x] Add restore tests for existing defaults keys.
 - [x] Add restore tests for absent defaults keys.
+- [x] Add target-list coverage for the expanded adapter registry.
+- [x] Add Firefox profile dotfile apply/restore coverage.
+- [x] Add generated app config apply/restore coverage for terminal/editor/TUI/macOS-tool targets.
 - [ ] Add doctor failure tests for unwritable app support paths.
 
 Acceptance criteria:
@@ -199,6 +298,8 @@ Acceptance criteria:
   - [x] Obsidian vault not configured
   - [x] Chrome theme loading
   - [x] Terminal profile activation
+- [x] Add generated app adapter documentation.
+- [x] Add Firefox-family browser restart documentation.
 - [x] Add uninstall instructions to `README.md`, not only `docs/packaging.md`.
 
 Acceptance criteria:

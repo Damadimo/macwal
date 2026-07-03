@@ -11,7 +11,7 @@ import UniformTypeIdentifiers
 struct MacwalCoreTests {
     @Test func targetListContainsAllPlannedTargets() throws {
         let names = MacwalTarget.allCases.map(\.rawValue)
-        #expect(names == ["system", "terminal", "shell", "obsidian", "chrome", "safari", "spotify", "finder"])
+        #expect(names == expectedTargetNames)
     }
 
     @Test func unknownTargetFails() throws {
@@ -211,7 +211,7 @@ struct MacwalCoreTests {
             #expect(Bool(false), "Missing targets JSON.")
             return
         }
-        #expect(targets.count == 8)
+        #expect(targets.count == expectedTargetNames.count)
     }
 
     @MainActor
@@ -247,6 +247,125 @@ struct MacwalCoreTests {
             return target
         }
         #expect(names == ["terminal", "shell", "chrome", "safari"])
+    }
+
+    @MainActor
+    @Test func applyAndRestoreFirefoxProfileDotfiles() throws {
+        let temp = try TemporaryWorkspace()
+        let firefoxRoot = temp.root.appendingPathComponent("Library/Application Support/Firefox", isDirectory: true)
+        let profile = firefoxRoot.appendingPathComponent("Profiles/abc.default-release", isDirectory: true)
+        try FileManager.default.createDirectory(at: profile, withIntermediateDirectories: true)
+        try """
+        [Profile0]
+        Name=default-release
+        IsRelative=1
+        Path=Profiles/abc.default-release
+        Default=1
+        """.data(using: .utf8)?.write(to: firefoxRoot.appendingPathComponent("profiles.ini"))
+
+        let image = try temp.writePNG(named: "wallpaper.png", colors: [
+            RGBColor(red: 18, green: 26, blue: 36),
+            RGBColor(red: 80, green: 150, blue: 170),
+            RGBColor(red: 210, green: 120, blue: 80)
+        ])
+        let runner = CommandRunner(environment: temp.environment)
+
+        let apply = runner.run(arguments: [
+            "apply",
+            "--image", image.path,
+            "--targets", "firefox",
+            "--json"
+        ])
+
+        #expect(apply.exitCode == 0)
+        let chrome = profile.appendingPathComponent("chrome", isDirectory: true)
+        let macwalCSS = chrome.appendingPathComponent("macwal.css")
+        let userChrome = chrome.appendingPathComponent("userChrome.css")
+        let userContent = chrome.appendingPathComponent("userContent.css")
+        let userJS = profile.appendingPathComponent("user.js")
+
+        #expect(try String(contentsOf: macwalCSS, encoding: .utf8).contains("--toolbar-bgcolor"))
+        #expect(try String(contentsOf: userChrome, encoding: .utf8).contains("@import url(\"macwal.css\");"))
+        #expect(try String(contentsOf: userContent, encoding: .utf8).contains("@import url(\"macwal.css\");"))
+        #expect(try String(contentsOf: userJS, encoding: .utf8).contains("toolkit.legacyUserProfileCustomizations.stylesheets"))
+
+        let restore = runner.run(arguments: [
+            "restore",
+            "--targets", "firefox"
+        ])
+
+        #expect(restore.exitCode == 0)
+        #expect(!FileManager.default.fileExists(atPath: macwalCSS.path))
+        #expect(!FileManager.default.fileExists(atPath: userChrome.path))
+        #expect(!FileManager.default.fileExists(atPath: userContent.path))
+        #expect(!FileManager.default.fileExists(atPath: userJS.path))
+    }
+
+    @MainActor
+    @Test func applyAndRestoreGeneratedApplicationConfigs() throws {
+        let temp = try TemporaryWorkspace(extraEnvironment: ["PATH": "/tmp/macwal-tests-no-tools"])
+        let image = try temp.writePNG(named: "wallpaper.png", colors: [
+            RGBColor(red: 18, green: 24, blue: 34),
+            RGBColor(red: 90, green: 170, blue: 188),
+            RGBColor(red: 210, green: 145, blue: 72)
+        ])
+        let runner = CommandRunner(environment: temp.environment)
+        let targets = [
+            "alacritty", "kitty", "wezterm", "ghostty", "iterm2", "vscode", "zed",
+            "vim", "neovim", "tmux", "starship", "bat", "btop", "yazi", "fzf",
+            "lazygit", "aerospace", "yabai", "sketchybar", "janky-borders",
+            "hammerspoon", "raycast", "alfred", "discord", "telegram", "slack"
+        ].joined(separator: ",")
+
+        let apply = runner.run(arguments: [
+            "apply",
+            "--image", image.path,
+            "--targets", targets,
+            "--json"
+        ])
+
+        #expect(apply.exitCode == 0)
+        let home = temp.root
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/alacritty/macwal.toml"), encoding: .utf8).contains("[colors.primary]"))
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/alacritty/alacritty.toml"), encoding: .utf8).contains("macwal.toml"))
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/kitty/macwal.conf"), encoding: .utf8).contains("color0"))
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/kitty/kitty.conf"), encoding: .utf8).contains("include macwal.conf"))
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/wezterm/macwal.lua"), encoding: .utf8).contains("return {"))
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/ghostty/themes/macwal"), encoding: .utf8).contains("palette = 0="))
+        #expect(try String(contentsOf: home.appendingPathComponent("Library/Application Support/iTerm2/DynamicProfiles/macwal.json"), encoding: .utf8).contains("\"Profiles\""))
+        #expect(try String(contentsOf: home.appendingPathComponent(".vscode/extensions/macwal-theme/package.json"), encoding: .utf8).contains("\"macwal-theme\""))
+        #expect(try String(contentsOf: home.appendingPathComponent("Library/Application Support/Code/User/settings.json"), encoding: .utf8).contains("workbench.colorTheme"))
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/zed/themes/macwal.json"), encoding: .utf8).contains("\"themes\""))
+        #expect(try String(contentsOf: home.appendingPathComponent(".vimrc"), encoding: .utf8).contains("colorscheme macwal"))
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/nvim/init.vim"), encoding: .utf8).contains("colorscheme macwal"))
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/tmux/tmux.conf"), encoding: .utf8).contains("source-file ~/.config/tmux/macwal.tmux"))
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/starship-macwal.toml"), encoding: .utf8).contains("[palettes.macwal]"))
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/bat/config"), encoding: .utf8).contains("--theme=macwal"))
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/btop/btop.conf"), encoding: .utf8).contains("color_theme = \"macwal\""))
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/yazi/theme.toml"), encoding: .utf8).contains("[manager]"))
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/macwal/fzf.sh"), encoding: .utf8).contains("FZF_DEFAULT_OPTS"))
+        #expect(try String(contentsOf: home.appendingPathComponent("Library/Application Support/lazygit/config.yml"), encoding: .utf8).contains("activeBorderColor"))
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/aerospace/macwal.toml"), encoding: .utf8).contains("[macwal]"))
+        #expect(try String(contentsOf: home.appendingPathComponent("Library/Application Support/macwal/generated/yabai/macwal.sh"), encoding: .utf8).contains("yabai -m config"))
+        #expect(try String(contentsOf: home.appendingPathComponent("Library/Application Support/macwal/generated/sketchybar/macwal.sh"), encoding: .utf8).contains("sketchybar --bar"))
+        #expect(try String(contentsOf: home.appendingPathComponent("Library/Application Support/macwal/generated/janky-borders/macwal.sh"), encoding: .utf8).contains("borders active_color"))
+        #expect(try String(contentsOf: home.appendingPathComponent(".hammerspoon/init.lua"), encoding: .utf8).contains("dofile"))
+        #expect(try String(contentsOf: home.appendingPathComponent("Library/Application Support/macwal/generated/raycast/colors.json"), encoding: .utf8).contains("\"accent\""))
+        #expect(try String(contentsOf: home.appendingPathComponent("Library/Application Support/macwal/generated/alfred/colors.json"), encoding: .utf8).contains("\"accent\""))
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/Vencord/themes/macwal.css"), encoding: .utf8).contains("@name macwal"))
+        #expect(try String(contentsOf: home.appendingPathComponent("Library/Application Support/macwal/generated/telegram/colors.json"), encoding: .utf8).contains("\"accent\""))
+        #expect(try String(contentsOf: home.appendingPathComponent("Library/Application Support/macwal/generated/slack/colors.json"), encoding: .utf8).contains("\"accent\""))
+
+        let restore = runner.run(arguments: [
+            "restore",
+            "--targets", targets
+        ])
+
+        #expect(restore.exitCode == 0)
+        #expect(!FileManager.default.fileExists(atPath: home.appendingPathComponent(".config/alacritty/macwal.toml").path))
+        #expect(!FileManager.default.fileExists(atPath: home.appendingPathComponent(".config/kitty/macwal.conf").path))
+        #expect(!FileManager.default.fileExists(atPath: home.appendingPathComponent(".config/wezterm/macwal.lua").path))
+        #expect(!FileManager.default.fileExists(atPath: home.appendingPathComponent(".config/Vencord/themes/macwal.css").path))
     }
 
     @MainActor
@@ -867,6 +986,18 @@ struct MacwalCoreTests {
             "black", "red", "green", "yellow", "blue", "magenta", "cyan", "white",
             "brightBlack", "brightRed", "brightGreen", "brightYellow", "brightBlue",
             "brightMagenta", "brightCyan", "brightWhite"
+        ]
+    }
+
+    private var expectedTargetNames: [String] {
+        [
+            "system", "terminal", "shell", "obsidian", "chrome", "firefox",
+            "librewolf", "zen", "floorp", "safari", "spotify", "alacritty",
+            "kitty", "wezterm", "ghostty", "iterm2", "vscode", "zed", "vim",
+            "neovim", "tmux", "starship", "bat", "btop", "yazi", "fzf",
+            "lazygit", "aerospace", "yabai", "sketchybar", "janky-borders",
+            "hammerspoon", "raycast", "alfred", "discord", "thunderbird",
+            "telegram", "slack", "finder"
         ]
     }
 

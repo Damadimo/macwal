@@ -201,6 +201,8 @@ public struct CommandRunner {
             case .system:
                 return allowPrivate
                     && (config.adapters.system.setAppearanceMode || config.adapters.system.setAccentColor || config.adapters.system.setHighlightColor)
+            case .firefox, .librewolf, .zen, .floorp, .alacritty, .kitty, .wezterm, .ghostty, .iterm2, .vscode, .zed, .vim, .neovim, .tmux, .starship, .bat, .btop, .yazi, .fzf, .lazygit, .aerospace, .yabai, .sketchybar, .jankyBorders, .hammerspoon, .raycast, .alfred, .discord, .thunderbird, .telegram, .slack:
+                return false
             case .shell, .terminal, .chrome, .safari:
                 return true
             }
@@ -490,7 +492,14 @@ public struct CommandRunner {
                 return "unavailable on this macOS version"
             }
             return config.adapters.finder.setFolderTint ? "configured private" : "available noop"
-        case .chrome, .safari, .shell, .terminal:
+        case .firefox, .librewolf, .zen, .floorp, .thunderbird:
+            return "available; preview detects profiles"
+        case .yabai, .sketchybar, .jankyBorders, .aerospace:
+            if let executable = target.requiresExternalTool, commandExecutor.executablePath(executable) == nil {
+                return "missing optional prerequisite"
+            }
+            return "available"
+        case .chrome, .safari, .shell, .terminal, .alacritty, .kitty, .wezterm, .ghostty, .iterm2, .vscode, .zed, .vim, .neovim, .tmux, .starship, .bat, .btop, .yazi, .fzf, .lazygit, .hammerspoon, .raycast, .alfred, .discord, .telegram, .slack:
             return "available"
         }
     }
@@ -507,6 +516,12 @@ public struct CommandRunner {
             "Chrome has no supported per-user silent theme activation API; load the generated theme folder from chrome://extensions."
         case .terminal:
             "No action required; macwal installs the generated Terminal profile unless setAsDefault is disabled."
+        case .firefox, .librewolf, .zen, .floorp, .thunderbird:
+            "Close and reopen the app after applying profile CSS."
+        case .raycast, .alfred, .telegram, .slack:
+            "macwal can generate palette assets, but this app does not expose stable theme dotfiles for automatic activation."
+        case .aerospace, .yabai, .sketchybar, .jankyBorders:
+            "Install the corresponding CLI tool before using this target."
         default:
             "No action required for the current implementation stage."
         }
@@ -583,7 +598,7 @@ public struct CommandRunner {
       macwal list-targets [--json]
 
     Targets:
-      system, terminal, shell, obsidian, chrome, safari, spotify, finder
+      Run `macwal list-targets` for the full target list.
 
     """
 }
