@@ -1,0 +1,13 @@
+{
+  "": {
+    "dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/SwiftCompilerPlugin.build/SwiftCompilerPlugin.d",
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/SwiftCompilerPlugin.build/SwiftCompilerPlugin.o",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/SwiftCompilerPlugin.build/primary.swiftdeps"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-syntax/Sources/SwiftCompilerPlugin/CompilerPlugin.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/SwiftCompilerPlugin.build/CompilerPlugin.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/SwiftCompilerPlugin.build/CompilerPlugin~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/SwiftCompilerPlugin.build/CompilerPlugin.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/SwiftCompilerPlugin.build/CompilerPlugin.dia"
+  }
+}

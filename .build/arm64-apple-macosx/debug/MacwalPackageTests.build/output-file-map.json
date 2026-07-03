@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/debug/MacwalPackageTests.build/primary.swiftdeps"
+  },
+  "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/debug/MacwalPackageTests.derived/runner.swift": {
+    "dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/debug/MacwalPackageTests.build/runner.d",
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/debug/MacwalPackageTests.build/runner.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/debug/MacwalPackageTests.build/runner~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/debug/MacwalPackageTests.build/runner.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/debug/MacwalPackageTests.build/runner.dia"
+  }
+}

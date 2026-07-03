@@ -1,0 +1,535 @@
+{
+  "": {
+    "dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Testing.d",
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Testing.o",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/primary.swiftdeps"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/ABI/EntryPoints/ABIEntryPoint.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIEntryPoint.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIEntryPoint~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIEntryPoint.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIEntryPoint.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/ABI/EntryPoints/EntryPoint.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/EntryPoint.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/EntryPoint~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/EntryPoint.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/EntryPoint.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/ABI/EntryPoints/SwiftPMEntryPoint.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SwiftPMEntryPoint.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SwiftPMEntryPoint~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SwiftPMEntryPoint.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SwiftPMEntryPoint.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/ABI/v0/ABIv0.Record+Streaming.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.Record+Streaming.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.Record+Streaming~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.Record+Streaming.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.Record+Streaming.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/ABI/v0/ABIv0.Record.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.Record.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.Record~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.Record.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.Record.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/ABI/v0/ABIv0.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/ABI/v0/Encoded/ABIv0.EncodedBacktrace.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedBacktrace.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedBacktrace~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedBacktrace.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedBacktrace.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/ABI/v0/Encoded/ABIv0.EncodedEvent.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedEvent.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedEvent~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedEvent.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedEvent.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/ABI/v0/Encoded/ABIv0.EncodedInstant.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedInstant.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedInstant~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedInstant.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedInstant.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/ABI/v0/Encoded/ABIv0.EncodedIssue.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedIssue.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedIssue~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedIssue.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedIssue.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/ABI/v0/Encoded/ABIv0.EncodedMessage.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedMessage.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedMessage~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedMessage.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedMessage.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/ABI/v0/Encoded/ABIv0.EncodedTest.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedTest.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedTest~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedTest.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ABIv0.EncodedTest.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Events/Clock.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Clock.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Clock~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Clock.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Clock.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Events/Event.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Event.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Event~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Event.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Event.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Events/Recorder/Event.ConsoleOutputRecorder.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Event.ConsoleOutputRecorder.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Event.ConsoleOutputRecorder~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Event.ConsoleOutputRecorder.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Event.ConsoleOutputRecorder.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Events/Recorder/Event.HumanReadableOutputRecorder.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Event.HumanReadableOutputRecorder.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Event.HumanReadableOutputRecorder~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Event.HumanReadableOutputRecorder.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Event.HumanReadableOutputRecorder.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Events/Recorder/Event.JUnitXMLRecorder.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Event.JUnitXMLRecorder.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Event.JUnitXMLRecorder~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Event.JUnitXMLRecorder.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Event.JUnitXMLRecorder.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Events/Recorder/Event.Symbol.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Event.Symbol.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Event.Symbol~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Event.Symbol.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Event.Symbol.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Events/TimeValue.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/TimeValue.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/TimeValue~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/TimeValue.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/TimeValue.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/ExitTests/ExitCondition.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ExitCondition.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ExitCondition~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ExitCondition.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ExitCondition.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/ExitTests/ExitTest.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ExitTest.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ExitTest~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ExitTest.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ExitTest.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/ExitTests/SpawnProcess.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SpawnProcess.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SpawnProcess~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SpawnProcess.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SpawnProcess.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/ExitTests/WaitFor.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/WaitFor.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/WaitFor~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/WaitFor.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/WaitFor.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Expectations/Expectation+Macro.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Expectation+Macro.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Expectation+Macro~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Expectation+Macro.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Expectation+Macro.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Expectations/Expectation.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Expectation.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Expectation~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Expectation.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Expectation.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Expectations/ExpectationChecking+Macro.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ExpectationChecking+Macro.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ExpectationChecking+Macro~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ExpectationChecking+Macro.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ExpectationChecking+Macro.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Issues/Confirmation.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Confirmation.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Confirmation~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Confirmation.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Confirmation.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Issues/ErrorSnapshot.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ErrorSnapshot.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ErrorSnapshot~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ErrorSnapshot.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ErrorSnapshot.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Issues/Issue+Recording.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Issue+Recording.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Issue+Recording~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Issue+Recording.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Issue+Recording.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Issues/Issue.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Issue.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Issue~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Issue.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Issue.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Issues/KnownIssue.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/KnownIssue.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/KnownIssue~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/KnownIssue.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/KnownIssue.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Parameterization/CustomTestArgumentEncodable.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CustomTestArgumentEncodable.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CustomTestArgumentEncodable~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CustomTestArgumentEncodable.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CustomTestArgumentEncodable.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Parameterization/Test.Case.Generator.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.Case.Generator.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.Case.Generator~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.Case.Generator.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.Case.Generator.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Parameterization/Test.Case.ID.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.Case.ID.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.Case.ID~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.Case.ID.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.Case.ID.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Parameterization/Test.Case.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.Case.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.Case~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.Case.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.Case.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Parameterization/TypeInfo.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/TypeInfo.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/TypeInfo~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/TypeInfo.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/TypeInfo.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Running/Configuration+EventHandling.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Configuration+EventHandling.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Configuration+EventHandling~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Configuration+EventHandling.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Configuration+EventHandling.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Running/Configuration.TestFilter.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Configuration.TestFilter.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Configuration.TestFilter~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Configuration.TestFilter.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Configuration.TestFilter.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Running/Configuration.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Configuration.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Configuration~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Configuration.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Configuration.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Running/Runner.Plan+Dumping.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Runner.Plan+Dumping.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Runner.Plan+Dumping~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Runner.Plan+Dumping.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Runner.Plan+Dumping.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Running/Runner.Plan.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Runner.Plan.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Runner.Plan~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Runner.Plan.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Runner.Plan.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Running/Runner.RuntimeState.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Runner.RuntimeState.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Runner.RuntimeState~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Runner.RuntimeState.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Runner.RuntimeState.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Running/Runner.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Runner.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Runner~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Runner.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Runner.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Running/SkipInfo.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SkipInfo.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SkipInfo~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SkipInfo.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SkipInfo.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/SourceAttribution/Backtrace+Symbolication.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Backtrace+Symbolication.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Backtrace+Symbolication~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Backtrace+Symbolication.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Backtrace+Symbolication.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/SourceAttribution/Backtrace.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Backtrace.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Backtrace~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Backtrace.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Backtrace.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/SourceAttribution/CustomTestStringConvertible.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CustomTestStringConvertible.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CustomTestStringConvertible~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CustomTestStringConvertible.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CustomTestStringConvertible.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/SourceAttribution/Expression+Macro.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Expression+Macro.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Expression+Macro~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Expression+Macro.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Expression+Macro.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/SourceAttribution/Expression.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Expression.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Expression~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Expression.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Expression.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/SourceAttribution/SourceContext.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SourceContext.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SourceContext~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SourceContext.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SourceContext.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/SourceAttribution/SourceLocation+Macro.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SourceLocation+Macro.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SourceLocation+Macro~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SourceLocation+Macro.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SourceLocation+Macro.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/SourceAttribution/SourceLocation.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SourceLocation.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SourceLocation~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SourceLocation.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SourceLocation.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Support/Additions/ArrayAdditions.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ArrayAdditions.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ArrayAdditions~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ArrayAdditions.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ArrayAdditions.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Support/Additions/CollectionDifferenceAdditions.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CollectionDifferenceAdditions.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CollectionDifferenceAdditions~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CollectionDifferenceAdditions.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CollectionDifferenceAdditions.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Support/Additions/CommandLineAdditions.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CommandLineAdditions.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CommandLineAdditions~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CommandLineAdditions.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CommandLineAdditions.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Support/Additions/NumericAdditions.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/NumericAdditions.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/NumericAdditions~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/NumericAdditions.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/NumericAdditions.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Support/Additions/ResultAdditions.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ResultAdditions.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ResultAdditions~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ResultAdditions.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ResultAdditions.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Support/CError.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CError.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CError~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CError.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CError.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Support/CartesianProduct.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CartesianProduct.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CartesianProduct~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CartesianProduct.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/CartesianProduct.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Support/Environment.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Environment.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Environment~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Environment.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Environment.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Support/FileHandle.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/FileHandle.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/FileHandle~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/FileHandle.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/FileHandle.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Support/GetSymbol.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/GetSymbol.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/GetSymbol~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/GetSymbol.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/GetSymbol.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Support/Graph.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Graph.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Graph~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Graph.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Graph.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Support/JSON.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/JSON.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/JSON~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/JSON.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/JSON.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Support/Locked.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Locked.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Locked~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Locked.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Locked.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Support/SystemError.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SystemError.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SystemError~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SystemError.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SystemError.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Support/Versions.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Versions.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Versions~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Versions.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Versions.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Test+Discovery.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test+Discovery.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test+Discovery~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test+Discovery.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test+Discovery.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Test+Macro.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test+Macro.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test+Macro~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test+Macro.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test+Macro.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Test.ID.Selection.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.ID.Selection.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.ID.Selection~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.ID.Selection.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.ID.Selection.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Test.ID.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.ID.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.ID~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.ID.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.ID.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Test.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Test.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Traits/Bug.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Bug.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Bug~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Bug.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Bug.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Traits/Comment+Macro.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Comment+Macro.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Comment+Macro~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Comment+Macro.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Comment+Macro.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Traits/Comment.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Comment.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Comment~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Comment.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Comment.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Traits/ConditionTrait+Macro.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ConditionTrait+Macro.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ConditionTrait+Macro~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ConditionTrait+Macro.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ConditionTrait+Macro.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Traits/ConditionTrait.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ConditionTrait.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ConditionTrait~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ConditionTrait.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ConditionTrait.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Traits/HiddenTrait.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/HiddenTrait.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/HiddenTrait~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/HiddenTrait.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/HiddenTrait.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Traits/ParallelizationTrait.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ParallelizationTrait.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ParallelizationTrait~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ParallelizationTrait.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/ParallelizationTrait.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Traits/SPIAwareTrait.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SPIAwareTrait.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SPIAwareTrait~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SPIAwareTrait.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/SPIAwareTrait.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Traits/Tags/Tag+Macro.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag+Macro.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag+Macro~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag+Macro.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag+Macro.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Traits/Tags/Tag+Predefined.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag+Predefined.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag+Predefined~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag+Predefined.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag+Predefined.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Traits/Tags/Tag.Color+Loading.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag.Color+Loading.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag.Color+Loading~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag.Color+Loading.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag.Color+Loading.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Traits/Tags/Tag.Color.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag.Color.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag.Color~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag.Color.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag.Color.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Traits/Tags/Tag.List.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag.List.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag.List~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag.List.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag.List.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Traits/Tags/Tag.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Tag.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Traits/TimeLimitTrait.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/TimeLimitTrait.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/TimeLimitTrait~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/TimeLimitTrait.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/TimeLimitTrait.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/Testing/Traits/Trait.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Trait.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Trait~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Trait.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/Testing.build/Trait.dia"
+  }
+}

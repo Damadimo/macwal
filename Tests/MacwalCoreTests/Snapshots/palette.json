@@ -1,0 +1,37 @@
+{
+  "appearance" : {
+    "contrastValidated" : true,
+    "recommendedMode" : "dark",
+    "wallpaperLuminance" : 0.2375
+  },
+  "colors" : {
+    "accent" : "#5aa9bc",
+    "accentAlt" : "#8ec6d3",
+    "background" : "#101820",
+    "black" : "#101820",
+    "blue" : "#588bca",
+    "brightBlack" : "#51575b",
+    "brightBlue" : "#7eb1e6",
+    "brightCyan" : "#7bbaca",
+    "brightGreen" : "#90be87",
+    "brightMagenta" : "#cc99da",
+    "brightRed" : "#ee7070",
+    "brightWhite" : "#ffffff",
+    "brightYellow" : "#e6c76c",
+    "cursor" : "#f6f2ea",
+    "cyan" : "#5aa9bc",
+    "foreground" : "#f6f2ea",
+    "green" : "#70a069",
+    "magenta" : "#b074c2",
+    "red" : "#d75252",
+    "selection" : "#2f6f86",
+    "white" : "#dfdcd5",
+    "yellow" : "#caa44a"
+  },
+  "generatedAt" : "1970-01-01T00:00:00Z",
+  "schemaVersion" : 1,
+  "source" : {
+    "kind" : "image",
+    "path" : "\/fixtures\/wallpaper.png"
+  }
+}

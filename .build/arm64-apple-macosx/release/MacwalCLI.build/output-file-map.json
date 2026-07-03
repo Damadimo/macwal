@@ -1,0 +1,13 @@
+{
+  "": {
+    "dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCLI.build/MacwalCLI.d",
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCLI.build/MacwalCLI.o",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCLI.build/primary.swiftdeps"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCLI/main.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCLI.build/main.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCLI.build/main~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCLI.build/main.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCLI.build/main.dia"
+  }
+}

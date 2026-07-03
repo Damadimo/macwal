@@ -1,0 +1,36 @@
+{
+  "colors" : {
+    "ANSIBlackColor" : "#101820",
+    "ANSIBlueColor" : "#588BCA",
+    "ANSIBrightBlackColor" : "#51575B",
+    "ANSIBrightBlueColor" : "#7EB1E6",
+    "ANSIBrightCyanColor" : "#7BBACA",
+    "ANSIBrightGreenColor" : "#90BE87",
+    "ANSIBrightMagentaColor" : "#CC99DA",
+    "ANSIBrightRedColor" : "#EE7070",
+    "ANSIBrightWhiteColor" : "#FFFFFF",
+    "ANSIBrightYellowColor" : "#E6C76C",
+    "ANSICyanColor" : "#5AA9BC",
+    "ANSIGreenColor" : "#70A069",
+    "ANSIMagentaColor" : "#B074C2",
+    "ANSIRedColor" : "#D75252",
+    "ANSIWhiteColor" : "#DFDCD5",
+    "ANSIYellowColor" : "#CAA44A",
+    "BackgroundColor" : "#101820",
+    "CursorColor" : "#F6F2EA",
+    "SelectionColor" : "#2F6F86",
+    "TextBoldColor" : "#F6F2EA",
+    "TextColor" : "#F6F2EA"
+  },
+  "settings" : {
+    "BackgroundBlur" : "false",
+    "BackgroundBlurInactive" : "false",
+    "DynamicANSIForegroundColors" : "false",
+    "FontAntialias" : "true",
+    "ProfileCurrentVersion" : "2.09",
+    "columnCount" : "120",
+    "name" : "macwal",
+    "rowCount" : "30",
+    "type" : "Window Settings"
+  }
+}

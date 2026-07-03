@@ -1,0 +1,157 @@
+{
+  "": {
+    "dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TestingMacros.d",
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TestingMacros.o",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/primary.swiftdeps"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/ConditionMacro.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/ConditionMacro.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/ConditionMacro~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/ConditionMacro.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/ConditionMacro.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/SourceLocationMacro.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/SourceLocationMacro.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/SourceLocationMacro~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/SourceLocationMacro.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/SourceLocationMacro.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/SuiteDeclarationMacro.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/SuiteDeclarationMacro.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/SuiteDeclarationMacro~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/SuiteDeclarationMacro.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/SuiteDeclarationMacro.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/Support/Additions/DeclGroupSyntaxAdditions.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/DeclGroupSyntaxAdditions.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/DeclGroupSyntaxAdditions~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/DeclGroupSyntaxAdditions.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/DeclGroupSyntaxAdditions.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/Support/Additions/EditorPlaceholderExprSyntaxAdditions.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/EditorPlaceholderExprSyntaxAdditions.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/EditorPlaceholderExprSyntaxAdditions~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/EditorPlaceholderExprSyntaxAdditions.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/EditorPlaceholderExprSyntaxAdditions.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/Support/Additions/FunctionDeclSyntaxAdditions.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/FunctionDeclSyntaxAdditions.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/FunctionDeclSyntaxAdditions~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/FunctionDeclSyntaxAdditions.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/FunctionDeclSyntaxAdditions.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/Support/Additions/MacroExpansionContextAdditions.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/MacroExpansionContextAdditions.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/MacroExpansionContextAdditions~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/MacroExpansionContextAdditions.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/MacroExpansionContextAdditions.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/Support/Additions/TokenSyntaxAdditions.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TokenSyntaxAdditions.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TokenSyntaxAdditions~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TokenSyntaxAdditions.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TokenSyntaxAdditions.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/Support/Additions/TriviaPieceAdditions.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TriviaPieceAdditions.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TriviaPieceAdditions~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TriviaPieceAdditions.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TriviaPieceAdditions.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/Support/Additions/TypeSyntaxProtocolAdditions.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TypeSyntaxProtocolAdditions.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TypeSyntaxProtocolAdditions~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TypeSyntaxProtocolAdditions.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TypeSyntaxProtocolAdditions.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/Support/Additions/VersionTupleSyntaxAdditions.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/VersionTupleSyntaxAdditions.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/VersionTupleSyntaxAdditions~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/VersionTupleSyntaxAdditions.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/VersionTupleSyntaxAdditions.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/Support/Additions/WithAttributesSyntaxAdditions.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/WithAttributesSyntaxAdditions.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/WithAttributesSyntaxAdditions~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/WithAttributesSyntaxAdditions.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/WithAttributesSyntaxAdditions.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/Support/Argument.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/Argument.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/Argument~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/Argument.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/Argument.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/Support/AttributeDiscovery.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/AttributeDiscovery.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/AttributeDiscovery~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/AttributeDiscovery.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/AttributeDiscovery.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/Support/AvailabilityGuards.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/AvailabilityGuards.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/AvailabilityGuards~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/AvailabilityGuards.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/AvailabilityGuards.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/Support/CRC32.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/CRC32.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/CRC32~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/CRC32.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/CRC32.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/Support/CommentParsing.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/CommentParsing.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/CommentParsing~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/CommentParsing.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/CommentParsing.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/Support/ConditionArgumentParsing.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/ConditionArgumentParsing.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/ConditionArgumentParsing~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/ConditionArgumentParsing.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/ConditionArgumentParsing.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/Support/DiagnosticMessage+Diagnosing.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/DiagnosticMessage+Diagnosing.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/DiagnosticMessage+Diagnosing~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/DiagnosticMessage+Diagnosing.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/DiagnosticMessage+Diagnosing.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/Support/DiagnosticMessage.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/DiagnosticMessage.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/DiagnosticMessage~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/DiagnosticMessage.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/DiagnosticMessage.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/Support/SourceCodeCapturing.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/SourceCodeCapturing.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/SourceCodeCapturing~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/SourceCodeCapturing.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/SourceCodeCapturing.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/Support/SourceLocationGeneration.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/SourceLocationGeneration.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/SourceLocationGeneration~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/SourceLocationGeneration.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/SourceLocationGeneration.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/TagMacro.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TagMacro.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TagMacro~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TagMacro.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TagMacro.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/TestDeclarationMacro.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TestDeclarationMacro.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TestDeclarationMacro~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TestDeclarationMacro.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TestDeclarationMacro.dia"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-testing/Sources/TestingMacros/TestingMacrosMain.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TestingMacrosMain.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TestingMacrosMain~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TestingMacrosMain.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/TestingMacros-tool.build/TestingMacrosMain.dia"
+  }
+}

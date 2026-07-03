@@ -1,0 +1,3 @@
+module SwiftDiagnostics {
+    header "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/debug/SwiftDiagnostics.build/include/SwiftDiagnostics-Swift.h"
+}

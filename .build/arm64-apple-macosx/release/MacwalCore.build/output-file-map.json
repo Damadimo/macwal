@@ -1,0 +1,163 @@
+{
+  "": {
+    "dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/MacwalCore.d",
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/MacwalCore.o",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/primary.swiftdeps"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Adapters/AdapterPlan.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/AdapterPlan.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/AdapterPlan~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/AdapterPlan.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/AdapterPlan.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Adapters/AdapterRegistry.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/AdapterRegistry.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/AdapterRegistry~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/AdapterRegistry.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/AdapterRegistry.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Adapters/ChromeAdapter.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/ChromeAdapter.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/ChromeAdapter~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/ChromeAdapter.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/ChromeAdapter.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Adapters/FinderAdapter.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/FinderAdapter.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/FinderAdapter~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/FinderAdapter.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/FinderAdapter.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Adapters/ObsidianAdapter.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/ObsidianAdapter.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/ObsidianAdapter~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/ObsidianAdapter.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/ObsidianAdapter.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Adapters/ShellAdapter.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/ShellAdapter.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/ShellAdapter~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/ShellAdapter.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/ShellAdapter.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Adapters/SpotifyAdapter.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/SpotifyAdapter.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/SpotifyAdapter~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/SpotifyAdapter.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/SpotifyAdapter.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Adapters/SystemAdapter.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/SystemAdapter.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/SystemAdapter~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/SystemAdapter.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/SystemAdapter.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Adapters/TerminalAdapter.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/TerminalAdapter.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/TerminalAdapter~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/TerminalAdapter.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/TerminalAdapter.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Backup/BackupManager.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/BackupManager.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/BackupManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/BackupManager.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/BackupManager.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/CLI/CommandRunner.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/CommandRunner.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/CommandRunner~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/CommandRunner.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/CommandRunner.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/CLI/MacwalError.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/MacwalError.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/MacwalError~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/MacwalError.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/MacwalError.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Config/ConfigStore.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/ConfigStore.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/ConfigStore~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/ConfigStore.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/ConfigStore.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Config/MacwalConfig.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/MacwalConfig.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/MacwalConfig~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/MacwalConfig.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/MacwalConfig.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Config/Targets.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/Targets.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/Targets~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/Targets.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/Targets.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Defaults/DefaultsClient.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/DefaultsClient.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/DefaultsClient~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/DefaultsClient.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/DefaultsClient.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Filesystem/FileSystem.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/FileSystem.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/FileSystem~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/FileSystem.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/FileSystem.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Filesystem/MacwalPaths.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/MacwalPaths.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/MacwalPaths~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/MacwalPaths.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/MacwalPaths.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Filesystem/RuntimeEnvironment.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/RuntimeEnvironment.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/RuntimeEnvironment~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/RuntimeEnvironment.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/RuntimeEnvironment.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Output/CommandResponse.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/CommandResponse.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/CommandResponse~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/CommandResponse.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/CommandResponse.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Output/JSONValue.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/JSONValue.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/JSONValue~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/JSONValue.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/JSONValue.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Palette/PaletteDocument.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/PaletteDocument.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/PaletteDocument~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/PaletteDocument.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/PaletteDocument.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Palette/PaletteGenerator.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/PaletteGenerator.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/PaletteGenerator~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/PaletteGenerator.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/PaletteGenerator.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Palette/RGBColor.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/RGBColor.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/RGBColor~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/RGBColor.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/RGBColor.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Process/CommandExecutor.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/CommandExecutor.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/CommandExecutor~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/CommandExecutor.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/CommandExecutor.dia"
+  },
+  "/Users/damadimo/projects/macwal/Sources/MacwalCore/Wallpaper/WallpaperProvider.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/WallpaperProvider.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/WallpaperProvider~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/WallpaperProvider.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/MacwalCore.build/WallpaperProvider.dia"
+  }
+}

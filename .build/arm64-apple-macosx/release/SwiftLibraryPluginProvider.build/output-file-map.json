@@ -1,0 +1,13 @@
+{
+  "": {
+    "dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/SwiftLibraryPluginProvider.build/SwiftLibraryPluginProvider.d",
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/SwiftLibraryPluginProvider.build/SwiftLibraryPluginProvider.o",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/SwiftLibraryPluginProvider.build/primary.swiftdeps"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-syntax/Sources/SwiftLibraryPluginProvider/LibraryPluginProvider.swift": {
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/SwiftLibraryPluginProvider.build/LibraryPluginProvider.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/SwiftLibraryPluginProvider.build/LibraryPluginProvider~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/SwiftLibraryPluginProvider.build/LibraryPluginProvider.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/SwiftLibraryPluginProvider.build/LibraryPluginProvider.dia"
+  }
+}

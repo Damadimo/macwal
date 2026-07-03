@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/debug/SwiftLibraryPluginProvider.build/primary.swiftdeps"
+  },
+  "/Users/damadimo/projects/macwal/.build/checkouts/swift-syntax/Sources/SwiftLibraryPluginProvider/LibraryPluginProvider.swift": {
+    "dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/debug/SwiftLibraryPluginProvider.build/LibraryPluginProvider.d",
+    "object": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/debug/SwiftLibraryPluginProvider.build/LibraryPluginProvider.swift.o",
+    "swiftmodule": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/debug/SwiftLibraryPluginProvider.build/LibraryPluginProvider~partial.swiftmodule",
+    "swift-dependencies": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/debug/SwiftLibraryPluginProvider.build/LibraryPluginProvider.swiftdeps",
+    "diagnostics": "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/debug/SwiftLibraryPluginProvider.build/LibraryPluginProvider.dia"
+  }
+}
