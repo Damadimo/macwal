@@ -71,31 +71,32 @@ Acceptance criteria:
 #### Terminal
 
 - [ ] Run `macwal apply --targets terminal --image PATH`.
-- [ ] Open the generated `.terminal` profile in Terminal.app.
-- [ ] Confirm colors render correctly.
-- [ ] Enable `adapters.terminal.setAsDefault` in config.
-- [ ] Verify apply without `--allow-private` is blocked.
-- [ ] Verify apply with `--allow-private` backs up and writes Terminal preferences.
+- [ ] Confirm the generated profile is installed as the default Terminal profile.
+- [ ] Open a new Terminal window and confirm colors render correctly.
+- [ ] Verify generated profile and defaults keys are backed up.
+- [ ] Set `adapters.terminal.setAsDefault` to `false` and verify apply only writes the `.terminal` file.
 - [ ] Run `macwal restore --targets terminal`.
 
 Acceptance criteria:
 
-- Generated profile imports without plist errors.
-- Direct preference mutation never happens without `--allow-private`.
+- Generated profile parses without plist errors.
+- Default config performs visible Terminal activation without `--allow-private`.
+- `setAsDefault: false` performs no Terminal defaults writes.
 - Restore returns Terminal preferences to their previous state.
 
 #### Obsidian
 
 - [ ] Configure a real test vault in `config.json`.
 - [ ] Run `macwal apply --targets obsidian --image PATH`.
-- [ ] Enable the `macwal.css` snippet in Obsidian.
-- [ ] Confirm the theme applies.
+- [ ] Confirm `.obsidian/appearance.json` includes `macwal` in `enabledCssSnippets`.
+- [ ] Open Obsidian and confirm the theme applies without enabling the snippet manually.
 - [ ] Run `macwal restore --targets obsidian`.
 
 Acceptance criteria:
 
 - Only configured vaults are written.
 - Existing snippet content is restored if it existed before apply.
+- Existing `appearance.json` content is preserved and restored.
 
 #### Chrome
 
@@ -177,8 +178,8 @@ Acceptance criteria:
 - [x] Add snapshot coverage for Spicetify `color.ini`.
 - [x] Add restore tests for pre-existing files.
 - [x] Add restore tests for absent files.
-- [ ] Add restore tests for existing defaults keys.
-- [ ] Add restore tests for absent defaults keys.
+- [x] Add restore tests for existing defaults keys.
+- [x] Add restore tests for absent defaults keys.
 - [ ] Add doctor failure tests for unwritable app support paths.
 
 Acceptance criteria:
@@ -197,7 +198,7 @@ Acceptance criteria:
   - [x] missing Spicetify
   - [x] Obsidian vault not configured
   - [x] Chrome theme loading
-  - [x] Terminal profile import
+  - [x] Terminal profile activation
 - [x] Add uninstall instructions to `README.md`, not only `docs/packaging.md`.
 
 Acceptance criteria:
@@ -220,7 +221,7 @@ Acceptance criteria:
 
 - Every required checklist item above is complete.
 - There are no known data-loss bugs.
-- There are no undocumented persistent writes.
+- Any undocumented persistent write is documented, backed up, and restorable.
 
 ## Known Limitations to Keep in Release Notes
 
@@ -228,5 +229,5 @@ Acceptance criteria:
 - Dock and menu bar glyphs cannot be safely recolored through public APIs.
 - Finder support uses reversible colored tag extended attributes, not full Apple folder customization internals.
 - System and Finder adapters use undocumented behavior and may break across macOS releases.
-- Chrome theme loading is manual in the MVP.
+- Chrome theme loading is manual because Chrome has no supported per-user silent activation API for unpacked themes.
 - Spicetify is required for Spotify and is not installed by `macwal`.

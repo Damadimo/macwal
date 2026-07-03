@@ -68,7 +68,7 @@ public struct MacwalConfig: Codable, Equatable, Sendable {
             allowPrivateByDefault: false,
             palette: .default,
             adapters: AdapterConfig(
-                terminal: TerminalConfig(profileName: "macwal", setAsDefault: false),
+                terminal: TerminalConfig(profileName: "macwal", setAsDefault: true),
                 obsidian: ObsidianConfig(vaults: []),
                 chrome: ChromeConfig(profiles: []),
                 spotify: SpotifyConfig(enabled: false, spicetifyPath: "spicetify"),

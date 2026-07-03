@@ -29,6 +29,15 @@ public struct DefaultsClient {
     }
 
     public func readDomain(_ domain: String) throws -> [String: Any] {
+        if let fakeURL = fakeDomainURL(domain) {
+            guard fileSystem.fileExists(fakeURL) else {
+                return [:]
+            }
+            let data = try Data(contentsOf: fakeURL)
+            let plist = try PropertyListSerialization.propertyList(from: data, options: [], format: nil)
+            return plist as? [String: Any] ?? [:]
+        }
+
         let result = try executor.run(executable: "/usr/bin/defaults", arguments: ["export", domain, "-"])
         if result.exitCode != 0 || result.stdout.isEmpty {
             return [:]
@@ -39,6 +48,12 @@ public struct DefaultsClient {
     }
 
     public func importDomain(_ domain: String, values: [String: Any]) throws {
+        if let fakeURL = fakeDomainURL(domain) {
+            let data = try PropertyListSerialization.data(fromPropertyList: values, format: .binary, options: 0)
+            try fileSystem.atomicWrite(data, to: fakeURL)
+            return
+        }
+
         try fileSystem.ensureDirectory(paths.cache)
         let temp = paths.cache.appendingPathComponent("defaults-\(UUID().uuidString).plist")
         let data = try PropertyListSerialization.data(fromPropertyList: values, format: .binary, options: 0)
@@ -51,5 +66,17 @@ public struct DefaultsClient {
         guard result.exitCode == 0 else {
             throw MacwalError.adapterFailed("defaults import failed for \(domain): \(result.stderrText)")
         }
+    }
+
+    private func fakeDomainURL(_ domain: String) -> URL? {
+        guard let storePath = executor.environment["MACWAL_DEFAULTS_STORE"] else {
+            return nil
+        }
+
+        let allowed = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-_"))
+        let fileName = domain.addingPercentEncoding(withAllowedCharacters: allowed) ?? domain
+        return URL(fileURLWithPath: storePath, isDirectory: true)
+            .appendingPathComponent(fileName)
+            .appendingPathExtension("plist")
     }
 }

@@ -32,15 +32,6 @@ public struct AdapterRegistry {
             case .shell:
                 return ShellAdapter(paths: paths, fileSystem: fileSystemFor(target: .shell), backupManager: backupManager(for: .shell)).preview()
             case .terminal:
-                if config.adapters.terminal.setAsDefault && !allowPrivate {
-                    let plan = TerminalAdapter(paths: paths, config: config.adapters.terminal, fileSystem: fileSystemFor(target: .terminal), backupManager: backupManager(for: .terminal), commandExecutor: commandExecutor).preview()
-                    return AdapterPlan(
-                        target: .terminal,
-                        status: "blocked",
-                        plannedWrites: plan.plannedWrites,
-                        messages: ["Terminal profile generation is safe, but setAsDefault mutates com.apple.Terminal and requires --allow-private."]
-                    )
-                }
                 return TerminalAdapter(paths: paths, config: config.adapters.terminal, fileSystem: fileSystemFor(target: .terminal), backupManager: backupManager(for: .terminal), commandExecutor: commandExecutor).preview()
             case .obsidian:
                 return ObsidianAdapter(paths: paths, config: config.adapters.obsidian, fileSystem: fileSystemFor(target: .obsidian), backupManager: backupManager(for: .obsidian)).preview()
@@ -68,10 +59,6 @@ public struct AdapterRegistry {
             if target.requiresAllowPrivate && !allowPrivate && !dryRun {
                 throw MacwalError.permissionDenied("Target '\(target.rawValue)' requires --allow-private.")
             }
-            if target == .terminal && config.adapters.terminal.setAsDefault && !allowPrivate && !dryRun {
-                throw MacwalError.permissionDenied("Terminal setAsDefault requires --allow-private because it mutates com.apple.Terminal preferences.")
-            }
-
             switch target {
             case .shell:
                 summaries.append(try ShellAdapter(paths: paths, fileSystem: fileSystemFor(target: .shell), backupManager: backupManager(for: .shell)).apply(palette: palette, dryRun: dryRun))

@@ -129,8 +129,10 @@ struct MacwalCoreTests {
         let paths = MacwalPaths(environment: temp.environment)
         let fileSystem = FileSystem(allowedWriteRoots: [paths.appSupport, paths.cache])
         let palette = snapshotPalette()
+        var terminalConfig = MacwalConfig.default.adapters.terminal
+        terminalConfig.setAsDefault = false
 
-        _ = try TerminalAdapter(paths: paths, fileSystem: fileSystem).apply(palette: palette, dryRun: false)
+        _ = try TerminalAdapter(paths: paths, config: terminalConfig, fileSystem: fileSystem).apply(palette: palette, dryRun: false)
 
         let profile = paths.generated.appendingPathComponent("terminal/macwal.terminal")
         #expect(try terminalProfileSnapshot(at: profile).encodedJSON() == snapshot(named: "terminal-profile-summary.json"))
@@ -181,9 +183,12 @@ struct MacwalCoreTests {
         ).apply(palette: palette, dryRun: false)
 
         let obsidianCSS = vault.appendingPathComponent(".obsidian/snippets/macwal.css")
+        let obsidianAppearance = vault.appendingPathComponent(".obsidian/appearance.json")
         let spotifyINI = paths.home.appendingPathComponent(".config/spicetify/Themes/macwal/color.ini")
 
         #expect(try String(contentsOf: obsidianCSS, encoding: .utf8) == snapshot(named: "obsidian-macwal.css"))
+        let appearanceJSON = try JSONSerialization.jsonObject(with: Data(contentsOf: obsidianAppearance)) as? [String: Any]
+        #expect(appearanceJSON?["enabledCssSnippets"] as? [String] == ["macwal"])
         #expect(try String(contentsOf: spotifyINI, encoding: .utf8) == snapshot(named: "spotify-color.ini"))
     }
 
@@ -426,7 +431,7 @@ struct MacwalCoreTests {
     }
 
     @MainActor
-    @Test func terminalSetAsDefaultRequiresAllowPrivateForApply() throws {
+    @Test func terminalSetAsDefaultAppliesWithoutAllowPrivate() throws {
         let temp = try TemporaryWorkspace()
         var config = MacwalConfig.default
         config.adapters.terminal.setAsDefault = true
@@ -445,12 +450,80 @@ struct MacwalCoreTests {
             "--json"
         ])
 
-        #expect(result.exitCode == 3)
+        #expect(result.exitCode == 0)
         let data = try #require(result.stdout.data(using: .utf8))
         let response = try JSONDecoder().decode(CommandResponse.self, from: data)
-        #expect(!response.success)
+        #expect(response.success)
         let terminalProfile = temp.appSupport.appendingPathComponent("generated/terminal/macwal.terminal")
+        #expect(FileManager.default.fileExists(atPath: terminalProfile.path))
+
+        let restore = runner.run(arguments: [
+            "restore",
+            "--targets", "terminal"
+        ])
+        #expect(restore.exitCode == 0)
         #expect(!FileManager.default.fileExists(atPath: terminalProfile.path))
+
+        let paths = MacwalPaths(environment: temp.environment)
+        let fileSystem = FileSystem(allowedWriteRoots: [paths.appSupport, paths.cache])
+        let defaults = DefaultsClient(
+            paths: paths,
+            executor: CommandExecutor(environment: temp.environment.environment),
+            fileSystem: fileSystem
+        )
+        #expect(try defaults.readValue(domain: "com.apple.Terminal", key: "Window Settings") == nil)
+        #expect(try defaults.readValue(domain: "com.apple.Terminal", key: "Default Window Settings") == nil)
+        #expect(try defaults.readValue(domain: "com.apple.Terminal", key: "Startup Window Settings") == nil)
+    }
+
+    @MainActor
+    @Test func terminalRestorePreservesExistingDefaultsKeys() throws {
+        let temp = try TemporaryWorkspace()
+        let paths = MacwalPaths(environment: temp.environment)
+        let fileSystem = FileSystem(allowedWriteRoots: [paths.appSupport, paths.cache])
+        let commandExecutor = CommandExecutor(environment: temp.environment.environment)
+        let defaults = DefaultsClient(paths: paths, executor: commandExecutor, fileSystem: fileSystem)
+
+        try defaults.setValue(
+            ["Basic": ["name": "Basic"]],
+            domain: "com.apple.Terminal",
+            key: "Window Settings"
+        )
+        try defaults.setValue("Basic", domain: "com.apple.Terminal", key: "Default Window Settings")
+        try defaults.setValue("Basic", domain: "com.apple.Terminal", key: "Startup Window Settings")
+
+        var config = MacwalConfig.default
+        config.adapters.terminal.profileName = "macwal"
+        config.adapters.terminal.setAsDefault = true
+        try temp.writeConfig(config)
+
+        let image = try temp.writePNG(named: "wallpaper.png", colors: [
+            RGBColor(red: 18, green: 32, blue: 48),
+            RGBColor(red: 80, green: 155, blue: 175)
+        ])
+        let runner = CommandRunner(environment: temp.environment, commandExecutor: commandExecutor)
+
+        let apply = runner.run(arguments: [
+            "apply",
+            "--image", image.path,
+            "--targets", "terminal"
+        ])
+        #expect(apply.exitCode == 0)
+        #expect(try defaults.readValue(domain: "com.apple.Terminal", key: "Default Window Settings") as? String == "macwal")
+        #expect(try defaults.readValue(domain: "com.apple.Terminal", key: "Startup Window Settings") as? String == "macwal")
+
+        let restore = runner.run(arguments: [
+            "restore",
+            "--targets", "terminal"
+        ])
+        #expect(restore.exitCode == 0)
+        #expect(try defaults.readValue(domain: "com.apple.Terminal", key: "Default Window Settings") as? String == "Basic")
+        #expect(try defaults.readValue(domain: "com.apple.Terminal", key: "Startup Window Settings") as? String == "Basic")
+
+        let windowSettings = try defaults.readValue(domain: "com.apple.Terminal", key: "Window Settings") as? [String: Any]
+        let basic = try #require(windowSettings?["Basic"] as? [String: Any])
+        #expect(basic["name"] as? String == "Basic")
+        #expect(windowSettings?["macwal"] == nil)
     }
 
     @MainActor
@@ -481,9 +554,14 @@ struct MacwalCoreTests {
 
         #expect(apply.exitCode == 0)
         let snippet = vault.appendingPathComponent(".obsidian/snippets/macwal.css")
+        let appearance = vault.appendingPathComponent(".obsidian/appearance.json")
         let css = try String(contentsOf: snippet, encoding: .utf8)
         #expect(css.contains("--background-primary"))
-        #expect(css.contains("Enable this snippet once"))
+        #expect(!css.contains("Enable this snippet once"))
+
+        let appearanceJSON = try JSONSerialization.jsonObject(with: Data(contentsOf: appearance)) as? [String: Any]
+        let enabledSnippets = try #require(appearanceJSON?["enabledCssSnippets"] as? [String])
+        #expect(enabledSnippets == ["macwal"])
 
         let restore = runner.run(arguments: [
             "restore",
@@ -492,6 +570,55 @@ struct MacwalCoreTests {
 
         #expect(restore.exitCode == 0)
         #expect(!FileManager.default.fileExists(atPath: snippet.path))
+        #expect(!FileManager.default.fileExists(atPath: appearance.path))
+    }
+
+    @MainActor
+    @Test func obsidianRestorePreservesExistingAppearanceJSON() throws {
+        let temp = try TemporaryWorkspace()
+        let vault = temp.root.appendingPathComponent("Vault", isDirectory: true)
+        let obsidianDirectory = vault.appendingPathComponent(".obsidian", isDirectory: true)
+        try FileManager.default.createDirectory(at: obsidianDirectory, withIntermediateDirectories: true)
+        let appearance = obsidianDirectory.appendingPathComponent("appearance.json")
+        let originalAppearance = """
+        {
+          "baseFontSize" : 16,
+          "enabledCssSnippets" : [
+            "existing"
+          ]
+        }
+        """
+        try originalAppearance.write(to: appearance, atomically: true, encoding: .utf8)
+
+        var config = MacwalConfig.default
+        config.defaultTargets = ["obsidian"]
+        config.adapters.obsidian.vaults = [vault.path]
+        try temp.writeConfig(config)
+
+        let image = try temp.writePNG(named: "wallpaper.png", colors: [
+            RGBColor(red: 25, green: 35, blue: 60),
+            RGBColor(red: 165, green: 95, blue: 150)
+        ])
+        let runner = CommandRunner(environment: temp.environment)
+
+        let apply = runner.run(arguments: [
+            "apply",
+            "--image", image.path,
+            "--targets", "obsidian"
+        ])
+        #expect(apply.exitCode == 0)
+
+        let appliedJSON = try JSONSerialization.jsonObject(with: Data(contentsOf: appearance)) as? [String: Any]
+        let enabledSnippets = try #require(appliedJSON?["enabledCssSnippets"] as? [String])
+        #expect(enabledSnippets == ["existing", "macwal"])
+        #expect(appliedJSON?["baseFontSize"] as? Int == 16)
+
+        let restore = runner.run(arguments: [
+            "restore",
+            "--targets", "obsidian"
+        ])
+        #expect(restore.exitCode == 0)
+        #expect(try String(contentsOf: appearance, encoding: .utf8) == originalAppearance)
     }
 
     @MainActor
@@ -896,6 +1023,7 @@ private struct TemporaryWorkspace {
         var env = ProcessInfo.processInfo.environment
         env["HOME"] = root.path
         env["MACWAL_HOME"] = root.path
+        env["MACWAL_DEFAULTS_STORE"] = root.appendingPathComponent("Library/Application Support/macwal/test-defaults", isDirectory: true).path
         for (key, value) in extraEnvironment {
             env[key] = value
         }

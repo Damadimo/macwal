@@ -66,11 +66,11 @@ public enum MacwalTarget: String, CaseIterable, Codable, Sendable {
         case .shell:
             "Writes generated shell, JSON, CSS, and Xresources files."
         case .terminal:
-            "Generates Terminal.app profile assets; direct preference mutation is not enabled in the MVP."
+            "Generates and installs a Terminal.app profile as the default profile."
         case .obsidian:
             "Writes CSS snippets to configured vaults."
         case .chrome:
-            "Generates a Manifest V3 theme folder that must be loaded manually."
+            "Generates a Manifest V3 theme folder; Chrome has no supported per-user silent activation API."
         case .safari:
             "No direct browser chrome theming; Safari inherits system appearance."
         case .spotify:

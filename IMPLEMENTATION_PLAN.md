@@ -95,9 +95,9 @@ system,terminal,shell,obsidian,chrome,safari,spotify,finder
 | Target | Classification | Default Enabled | Requires `--allow-private` | Requires External Tool | Notes |
 | --- | --- | --- | --- | --- | --- |
 | `shell` | supported | yes | no | no | Writes generated shell/theme files under app support only. |
-| `terminal` | supported/private mixed | yes | no for profile export, yes for direct preference mutation | no | Prefer importing/generated `.terminal` profile or controlled preference writes with backup. |
-| `obsidian` | supported app config | yes when vaults found | no | no | Writes CSS snippet files. User may need to enable snippet once. |
-| `chrome` | manual/supported extension format | yes | no | no | Generates MV3 theme folder. Loading/enabling may be manual unless policy path is explicitly enabled later. |
+| `terminal` | supported/private mixed | yes | no | no | Generates and installs a `.terminal` profile as the default profile, with backup and restore. |
+| `obsidian` | supported app config | yes when vaults found | no | no | Writes CSS snippet files and enables the generated snippet in `appearance.json`. |
+| `chrome` | manual/supported extension format | yes | no | no | Generates MV3 theme folder. Chrome has no supported per-user silent activation API for unpacked themes. |
 | `spotify` | external | no | no | `spicetify` | Writes Spicetify theme and runs `spicetify apply`. |
 | `safari` | supported system inheritance only | no | no | no | No direct Safari chrome theming. Reports inherited system effects. |
 | `system` | private | no | yes | no | Writes accent/highlight/light-dark preferences and posts notifications. |
@@ -232,7 +232,7 @@ The watcher LaunchAgent must be:
   "adapters": {
     "terminal": {
       "profileName": "macwal",
-      "setAsDefault": false
+      "setAsDefault": true
     },
     "obsidian": {
       "vaults": []
@@ -383,7 +383,7 @@ If `config.json` is missing, `macwal` must create it with defaults when a comman
 1. Implement terminal preview output with color blocks and ANSI labels.
 2. Implement JSON preview output that includes adapter plans.
 3. Add `macwal preview --targets TARGETS`.
-4. Preview must show which adapters will write, which require manual action, which require `--allow-private`, and which are unavailable.
+4. Preview must show which adapters will write, which cannot be silently activated, which require `--allow-private`, and which are unavailable.
 
 ### Acceptance Criteria
 
@@ -457,17 +457,17 @@ If `config.json` is missing, `macwal` must create it with defaults when a comman
 ~/Library/Application Support/macwal/generated/terminal/macwal.terminal
 ```
 
-4. Implement optional direct install into Terminal preferences only after backup.
-5. Implement optional `setAsDefault`.
-6. Prefer user-controlled import path before direct preference mutation.
+4. Implement direct install into Terminal preferences only after backup.
+5. Implement optional `setAsDefault` so users can disable direct preference mutation.
+6. Keep generated `.terminal` profile output available for inspection and restore.
 
 ### Acceptance Criteria
 
-- `macwal apply --targets terminal --dry-run --json` lists the `.terminal` profile path and reports no preference writes.
-- `macwal apply --targets terminal --image FIXTURE` writes `macwal.terminal`.
+- `macwal apply --targets terminal --dry-run --json` lists the `.terminal` profile path and Terminal defaults keys when `setAsDefault` is true.
+- `macwal apply --targets terminal --image FIXTURE` writes `macwal.terminal` and installs it as the default Terminal profile when `setAsDefault` is true.
 - The generated `.terminal` profile can be opened by Terminal.app without XML/plist parse errors.
 - The profile contains all 16 ANSI colors.
-- Direct preference mutation is not performed unless config enables it or a future explicit flag is added.
+- Direct preference mutation is not performed when `setAsDefault` is false.
 - If direct mutation is enabled, original `com.apple.Terminal` preferences are backed up before writing.
 - `macwal restore --targets terminal` restores the previous Terminal preferences or removes generated profile artifacts, depending on what was changed.
 
@@ -481,6 +481,7 @@ If `config.json` is missing, `macwal` must create it with defaults when a comman
 
 ```text
 <vault>/.obsidian/snippets/macwal.css
+<vault>/.obsidian/appearance.json
 ```
 
 4. Generate CSS variables and common Obsidian variables:
@@ -491,7 +492,8 @@ If `config.json` is missing, `macwal` must create it with defaults when a comman
    - `--text-accent`
    - `--interactive-accent`
    - `--h1-color` through `--h6-color`
-5. Do not edit Obsidian plugin files or app bundle files.
+5. Enable the generated snippet by updating `enabledCssSnippets` in `appearance.json`.
+6. Do not edit Obsidian plugin files or app bundle files.
 
 ### Acceptance Criteria
 
@@ -499,9 +501,10 @@ If `config.json` is missing, `macwal` must create it with defaults when a comman
 - `macwal apply --targets obsidian` writes only to configured vaults.
 - If no vaults are configured, `macwal apply --targets obsidian` exits with status `2` and explains how to configure vault paths.
 - `macwal.css` is valid CSS.
-- `macwal.css` contains a comment stating that Obsidian users must enable the snippet once in Appearance settings if it is not already enabled.
+- `appearance.json` contains `macwal` in `enabledCssSnippets` after apply.
 - Existing `macwal.css` is backed up before overwrite.
-- Restore returns each vault's `macwal.css` to its previous state.
+- Existing `appearance.json` is backed up before overwrite.
+- Restore returns each vault's `macwal.css` and `appearance.json` to their previous states.
 
 ## Milestone 10: Chrome Adapter
 
@@ -727,7 +730,7 @@ This adapter is private and must be disabled unless `--allow-private` is present
 2. Write one adapter doc per target under `docs/adapters/`.
 3. Document private adapter risks.
 4. Document manual Chrome loading.
-5. Document Obsidian snippet enabling.
+5. Document automatic Obsidian snippet enabling.
 6. Document Spicetify requirement.
 
 ### Acceptance Criteria
@@ -784,7 +787,7 @@ The MVP is complete only when all of these are true:
 - No patching macOS system files.
 - No patching app bundles in `/Applications`.
 - No automatic installation of Spicetify.
-- No automatic loading of Chrome unpacked extensions through UI scripting in the MVP.
+- No automatic loading of Chrome unpacked extensions through UI scripting or enterprise policy in the default adapter.
 - No direct Safari browser chrome theming.
 - No direct Dock background/icon recoloring beyond system-inherited appearance.
 - No direct menu bar status glyph recoloring.

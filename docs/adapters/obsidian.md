@@ -6,6 +6,7 @@ The Obsidian adapter writes:
 
 ```text
 <vault>/.obsidian/snippets/macwal.css
+<vault>/.obsidian/appearance.json
 ```
 
 Vaults must be listed in:
@@ -26,7 +27,7 @@ Example:
 }
 ```
 
-After the first write, enable the `macwal` snippet once in Obsidian Settings > Appearance > CSS snippets.
+`macwal` enables the generated `macwal` snippet automatically by adding it to `enabledCssSnippets` in `appearance.json`. Existing snippets and other appearance keys are preserved and backed up before writing.
 
 Restore:
 

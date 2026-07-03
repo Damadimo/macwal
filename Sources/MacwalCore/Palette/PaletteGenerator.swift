@@ -4,6 +4,10 @@ import ImageIO
 
 public struct PaletteGenerator: Sendable {
     private let dateProvider: @Sendable () -> Date
+    private struct ColorCandidate {
+        var color: RGBColor
+        var count: Int
+    }
 
     public init(dateProvider: @escaping @Sendable () -> Date = Date.init) {
         self.dateProvider = dateProvider
@@ -25,57 +29,49 @@ public struct PaletteGenerator: Sendable {
             mode = wallpaperLuminance < 0.55 ? "dark" : "light"
         }
 
-        let background: RGBColor
-        let foregroundSeed: RGBColor
-        if mode == "light" {
-            background = average.mixed(with: .white, amount: 0.88)
-            foregroundSeed = RGBColor(red: 17, green: 19, blue: 21)
-        } else {
-            background = average.mixed(with: .black, amount: 0.82)
-            foregroundSeed = RGBColor(red: 246, green: 242, blue: 234)
-        }
+        let candidates = rankedCandidates(from: pixels)
+        var pywalColors = adjustedPywalColors(
+            from: selectedSeedColors(from: candidates, fallback: average),
+            light: mode == "light"
+        )
 
-        let foreground = foregroundSeed.adjustedForContrast(
+        var background = pywalColors[0]
+        var foreground = pywalColors[15].adjustedForContrast(
             against: background,
             minimum: config.minimumForegroundContrast
         )
-        let accent = dominantAccent(from: pixels, fallback: average)
+        if foreground.contrastRatio(against: background) < config.minimumForegroundContrast {
+            background = mode == "light"
+                ? background.mixed(with: .white, amount: 0.15)
+                : background.mixed(with: .black, amount: 0.15)
+            foreground = foreground.adjustedForContrast(
+                against: background,
+                minimum: config.minimumForegroundContrast
+            )
+        }
+
+        pywalColors[0] = background
+        pywalColors[7] = pywalColors[7].adjustedForContrast(against: background, minimum: 2.0)
+        pywalColors[8] = pywalColors[8].mixed(with: foreground, amount: 0.08)
+        pywalColors[15] = foreground
+
+        let accent = dominantAccent(from: candidates, fallback: average)
             .adjustedForContrast(against: background, minimum: config.minimumAccentContrast)
 
         let selectionSeed = accent.mixed(with: background, amount: mode == "light" ? 0.35 : 0.55)
         let selection = selectionSeed.adjustedForContrast(against: foreground, minimum: 3.0)
 
-        var named: [String: RGBColor] = [
+        var named = ansiDictionary(from: pywalColors)
+        named.merge([
             "background": background,
             "foreground": foreground,
             "cursor": foreground,
             "selection": selection,
             "accent": accent,
-            "accentAlt": accent.mixed(with: mode == "light" ? .black : .white, amount: 0.28),
-            "black": background,
-            "brightBlack": background.mixed(with: foreground, amount: 0.28),
-            "white": foreground.mixed(with: background, amount: 0.08),
-            "brightWhite": mode == "light" ? .black : .white
-        ]
+            "accentAlt": accent.mixed(with: mode == "light" ? .black : .white, amount: 0.28)
+        ]) { _, new in new }
 
-        let ansiSeeds: [(String, RGBColor)] = [
-            ("red", RGBColor(red: 215, green: 82, blue: 82)),
-            ("green", RGBColor(red: 112, green: 160, blue: 105)),
-            ("yellow", RGBColor(red: 202, green: 164, blue: 74)),
-            ("blue", RGBColor(red: 88, green: 139, blue: 202)),
-            ("magenta", RGBColor(red: 176, green: 116, blue: 194)),
-            ("cyan", accent),
-            ("brightRed", RGBColor(red: 238, green: 112, blue: 112)),
-            ("brightGreen", RGBColor(red: 144, green: 190, blue: 135)),
-            ("brightYellow", RGBColor(red: 230, green: 199, blue: 108)),
-            ("brightBlue", RGBColor(red: 126, green: 177, blue: 230)),
-            ("brightMagenta", RGBColor(red: 204, green: 153, blue: 218)),
-            ("brightCyan", accent.mixed(with: mode == "light" ? .black : .white, amount: 0.22))
-        ]
-
-        for (name, color) in ansiSeeds {
-            named[name] = color.adjustedForContrast(against: background, minimum: 2.0)
-        }
+        repairANSIContrast(in: &named, background: background)
 
         let colors = named.mapValues(\.hex)
         let appearance = PaletteAppearance(
@@ -150,7 +146,7 @@ public struct PaletteGenerator: Sendable {
         return RGBColor(red: UInt8(red / count), green: UInt8(green / count), blue: UInt8(blue / count))
     }
 
-    private func dominantAccent(from pixels: [RGBColor], fallback: RGBColor) -> RGBColor {
+    private func rankedCandidates(from pixels: [RGBColor]) -> [ColorCandidate] {
         struct Bucket {
             var count: Int
             var red: Int
@@ -169,16 +165,98 @@ public struct PaletteGenerator: Sendable {
             buckets[key] = bucket
         }
 
-        let scored = buckets.values
-            .map { bucket -> (Double, RGBColor) in
+        return buckets.values
+            .map { bucket -> ColorCandidate in
                 let color = RGBColor(
                     red: UInt8(bucket.red / bucket.count),
                     green: UInt8(bucket.green / bucket.count),
                     blue: UInt8(bucket.blue / bucket.count)
                 )
-                let frequency = Double(bucket.count) / Double(max(1, pixels.count))
+                return ColorCandidate(color: color, count: bucket.count)
+            }
+            .sorted { left, right in
+                if left.count != right.count {
+                    return left.count > right.count
+                }
+                if left.color.saturation != right.color.saturation {
+                    return left.color.saturation > right.color.saturation
+                }
+                return left.color.hex < right.color.hex
+            }
+    }
+
+    private func selectedSeedColors(from candidates: [ColorCandidate], fallback: RGBColor) -> [RGBColor] {
+        let dominant = Array(candidates.prefix(35)).map(\.color)
+        let anchors = dominant.isEmpty ? [fallback] : dominant.sorted { left, right in
+            if left.perceivedLuminance == right.perceivedLuminance {
+                return left.hex < right.hex
+            }
+            return left.perceivedLuminance < right.perceivedLuminance
+        }
+
+        if anchors.count >= 16 {
+            return evenlySample(anchors, count: 16)
+        }
+
+        if anchors.count == 1 {
+            let color = anchors[0]
+            let start = color.mixed(with: .black, amount: 0.45)
+            let end = color.mixed(with: .white, amount: 0.62)
+            return (0..<16).map { index in
+                start.mixed(with: end, amount: Double(index) / 15.0)
+            }
+        }
+
+        return (0..<16).map { index in
+            let position = Double(index) / 15.0 * Double(anchors.count - 1)
+            let lower = Int(floor(position))
+            let upper = min(anchors.count - 1, lower + 1)
+            return anchors[lower].mixed(with: anchors[upper], amount: position - Double(lower))
+        }
+    }
+
+    private func evenlySample(_ colors: [RGBColor], count: Int) -> [RGBColor] {
+        guard count > 1, colors.count > 1 else {
+            return Array(colors.prefix(count))
+        }
+
+        return (0..<count).map { index in
+            let position = Double(index) / Double(count - 1) * Double(colors.count - 1)
+            return colors[Int(round(position))]
+        }
+    }
+
+    private func adjustedPywalColors(from colors: [RGBColor], light: Bool) -> [RGBColor] {
+        var raw = [colors[0]]
+        raw.append(contentsOf: colors[8..<16])
+        raw.append(contentsOf: colors[8..<15])
+
+        if light {
+            raw[0] = colors[15].mixed(with: .white, amount: 0.85)
+            raw[7] = colors[0]
+            raw[8] = colors[15].mixed(with: .black, amount: 0.40)
+            raw[15] = colors[0]
+        } else {
+            if raw[0].red >= 16 {
+                raw[0] = raw[0].mixed(with: .black, amount: 0.40)
+            }
+            let pywalForegroundBlend = RGBColor(red: 238, green: 238, blue: 238)
+            raw[7] = raw[7].mixed(with: pywalForegroundBlend, amount: 0.50)
+            raw[8] = raw[7].mixed(with: .black, amount: 0.30)
+            raw[15] = raw[15].mixed(with: pywalForegroundBlend, amount: 0.50)
+        }
+
+        return raw
+    }
+
+    private func dominantAccent(from candidates: [ColorCandidate], fallback: RGBColor) -> RGBColor {
+        let maxCount = Double(candidates.map(\.count).max() ?? 1)
+        let scored = candidates
+            .map { candidate -> (Double, RGBColor) in
+                let color = candidate.color
+                let frequency = Double(candidate.count) / maxCount
                 let luminancePenalty = abs(color.perceivedLuminance - 0.52)
-                let score = color.saturation * 2.2 + frequency * 0.9 - luminancePenalty
+                let score = color.saturation * 2.4 + frequency * 0.8 - luminancePenalty * 0.8
                 return (score, color)
             }
             .sorted { left, right in
@@ -189,6 +267,36 @@ public struct PaletteGenerator: Sendable {
             }
 
         return scored.first?.1 ?? fallback
+    }
+
+    private func ansiDictionary(from colors: [RGBColor]) -> [String: RGBColor] {
+        [
+            "black": colors[0],
+            "red": colors[1],
+            "green": colors[2],
+            "yellow": colors[3],
+            "blue": colors[4],
+            "magenta": colors[5],
+            "cyan": colors[6],
+            "white": colors[7],
+            "brightBlack": colors[8],
+            "brightRed": colors[9],
+            "brightGreen": colors[10],
+            "brightYellow": colors[11],
+            "brightBlue": colors[12],
+            "brightMagenta": colors[13],
+            "brightCyan": colors[14],
+            "brightWhite": colors[15]
+        ]
+    }
+
+    private func repairANSIContrast(in colors: inout [String: RGBColor], background: RGBColor) {
+        for name in ["red", "green", "yellow", "blue", "magenta", "cyan", "white", "brightRed", "brightGreen", "brightYellow", "brightBlue", "brightMagenta", "brightCyan"] {
+            colors[name] = colors[name]?.adjustedForContrast(against: background, minimum: 2.0)
+        }
+        colors["brightWhite"] = colors["brightWhite"]?.adjustedForContrast(against: background, minimum: 7.0)
+        colors["foreground"] = colors["foreground"]?.adjustedForContrast(against: background, minimum: 7.0)
+        colors["cursor"] = colors["foreground"]
     }
 
     private func validate(colors: [String: RGBColor]) -> Bool {

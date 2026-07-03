@@ -504,7 +504,9 @@ public struct CommandRunner {
         case .obsidian:
             "Add vault paths to config.json before applying the Obsidian adapter."
         case .chrome:
-            "Load the generated Chrome theme folder manually after generation."
+            "Chrome has no supported per-user silent theme activation API; load the generated theme folder from chrome://extensions."
+        case .terminal:
+            "No action required; macwal installs the generated Terminal profile unless setAsDefault is disabled."
         default:
             "No action required for the current implementation stage."
         }

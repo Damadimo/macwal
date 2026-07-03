@@ -8,14 +8,14 @@ The Chrome adapter generates a Manifest V3 theme folder:
 ~/Library/Application Support/macwal/generated/chrome/macwal-theme/
 ```
 
-Load it manually:
+Chrome does not expose a supported per-user CLI/API that silently activates an unpacked theme in an existing profile, so loading remains manual:
 
 1. Open `chrome://extensions`.
 2. Enable Developer mode.
 3. Choose "Load unpacked".
 4. Select the generated `macwal-theme` folder.
 
-`macwal` does not modify Chrome profile preferences.
+`macwal` does not modify Chrome profile preferences, install enterprise policies, or use UI scripting in the default adapter.
 
 Restore:
 

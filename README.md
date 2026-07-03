@@ -1,7 +1,7 @@
 # macwal
 
 `macwal` is a macOS command-line theming tool inspired by `pywal`.
-It reads the current wallpaper or an explicit image, extracts a contrast-safe palette, and applies generated theme assets to supported macOS and app-level surfaces.
+It reads the current wallpaper or an explicit image, extracts a pywal-style contrast-safe palette, and applies generated theme assets to supported macOS and app-level surfaces.
 
 ## Safety
 
@@ -33,8 +33,8 @@ swift build
 | Target | Classification | Status |
 | --- | --- | --- |
 | `shell` | supported | Generates shell, JSON, CSS, and Xresources files. |
-| `terminal` | supported/private mixed | Generates a `.terminal` profile. Does not mutate Terminal preferences by default. |
-| `obsidian` | supported app config | Writes CSS snippets to configured vaults. |
+| `terminal` | supported/private mixed | Generates and installs a `.terminal` profile as the default Terminal profile. |
+| `obsidian` | supported app config | Writes and enables CSS snippets in configured vaults. |
 | `chrome` | manual/supported extension format | Generates a Manifest V3 theme folder for manual loading. |
 | `spotify` | external | Generates and applies a Spicetify theme. |
 | `safari` | supported system inheritance only | Informational no-op; Safari follows system appearance. |
@@ -64,9 +64,9 @@ After that, try `terminal` and `chrome`:
 macwal apply --image /path/to/wallpaper.jpg --targets terminal,chrome
 ```
 
-Terminal writes a `.terminal` profile for manual import. Chrome writes a Manifest V3 theme folder for manual loading from `chrome://extensions`.
+Terminal installs its generated profile as the default Terminal profile by default. Chrome still writes a Manifest V3 theme folder for manual loading from `chrome://extensions`; Chrome does not expose a normal user-level API for silent theme activation.
 
-Do not start with `system`, `finder`, or Terminal `setAsDefault` on a primary account. Those paths use undocumented preferences or extended attributes and require explicit `--allow-private`.
+Do not start with `system` or `finder` on a primary account. Those paths use undocumented preferences or extended attributes and require explicit `--allow-private`.
 
 ## Safe Release Smoke Test
 
@@ -108,10 +108,10 @@ The config file is created at:
 ~/Library/Application Support/macwal/config.json
 ```
 
-Important opt-in settings:
+Important settings and opt-ins:
 
-- Terminal only mutates `com.apple.Terminal` preferences when `adapters.terminal.setAsDefault` is true and `--allow-private` is supplied.
-- Obsidian writes only to `adapters.obsidian.vaults`.
+- Terminal mutates `com.apple.Terminal` preferences when `adapters.terminal.setAsDefault` is true. This is true by default so `apply` visibly updates Terminal without a manual import step.
+- Obsidian writes only to `adapters.obsidian.vaults` and enables the generated `macwal` snippet in each vault's `.obsidian/appearance.json`.
 - Spotify requires `spicetify` on `PATH` or `adapters.spotify.spicetifyPath`.
 - System writes only happen when individual `adapters.system` booleans are enabled and `--allow-private` is supplied.
 - Finder writes only happen when `adapters.finder.setFolderTint` is true, folders are listed, macOS is Tahoe or newer, and `--allow-private` is supplied.
@@ -150,7 +150,7 @@ Then run:
 macwal apply --targets obsidian --image /path/to/wallpaper.jpg
 ```
 
-Obsidian users may need to enable the `macwal.css` snippet once in Settings > Appearance > CSS snippets.
+`macwal` enables the generated `macwal` snippet automatically by updating `.obsidian/appearance.json`.
 
 ### Missing Spicetify
 
@@ -168,15 +168,13 @@ After applying the Chrome adapter, open `chrome://extensions`, enable Developer 
 ~/Library/Application Support/macwal/generated/chrome/macwal-theme/
 ```
 
-### Terminal Profile Import
+Chrome does not expose a supported per-user CLI/API that silently activates an unpacked theme in an existing profile. Enterprise policy and UI scripting paths are intentionally not used by the default adapter.
 
-After applying the Terminal adapter, open:
+### Terminal Profile Activation
 
-```text
-~/Library/Application Support/macwal/generated/terminal/macwal.terminal
-```
+The Terminal adapter installs the generated profile into `com.apple.Terminal` and sets it as the default when `adapters.terminal.setAsDefault` is true.
 
-Terminal preference mutation only happens when `adapters.terminal.setAsDefault` is true and `--allow-private` is supplied.
+Disable direct Terminal activation by setting `adapters.terminal.setAsDefault` to `false`.
 
 ## Uninstall
 
@@ -212,6 +210,7 @@ The watcher installs `~/Library/LaunchAgents/io.macwal.watch.plist`. It runs `ma
 ## Limitations
 
 - Safari browser chrome cannot be directly themed.
+- Chrome generated themes cannot be silently activated through supported per-user Chrome APIs.
 - Dock and menu bar system icons cannot be directly recolored.
 - Finder folder tinting uses Tahoe's colored-tag behavior, not the full Customize Folder payload.
 - Private adapters use undocumented macOS behavior and may change between macOS releases.

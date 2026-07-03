@@ -16,9 +16,7 @@ Apply:
 macwal apply --targets terminal
 ```
 
-By default, import the profile by opening the generated `.terminal` file.
-
-To install the profile directly and set it as the default Terminal profile, enable:
+By default, `macwal` also installs the profile directly and sets it as the default Terminal profile:
 
 ```json
 {
@@ -37,13 +35,7 @@ When `setAsDefault` is true, `macwal` backs up and writes these Terminal prefere
 - `com.apple.Terminal:Default Window Settings`
 - `com.apple.Terminal:Startup Window Settings`
 
-Because these preference writes are undocumented, actual apply requires:
-
-```bash
-macwal apply --targets terminal --allow-private
-```
-
-Dry runs can still report the planned preference writes without `--allow-private`.
+Set `adapters.terminal.setAsDefault` to `false` to generate only the `.terminal` profile file.
 
 Restore:
 

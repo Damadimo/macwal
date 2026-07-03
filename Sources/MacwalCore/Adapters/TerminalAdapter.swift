@@ -60,10 +60,12 @@ public struct TerminalAdapter {
         try backupManager.backupFileBeforeWrite(outputFile, adapter: .terminal, dryRun: false)
         try fileSystem.atomicWrite(data, to: outputFile)
 
-        var messages = ["Terminal profile generated. Open the .terminal file to import it."]
+        var messages = ["Terminal profile generated."]
         if config.setAsDefault {
             try installAsDefault(profile: profile)
             messages = ["Terminal profile generated and installed as the default Terminal profile."]
+        } else {
+            messages = ["Terminal profile generated. Direct Terminal preference mutation is disabled in config.json."]
         }
 
         return AdapterApplySummary(
