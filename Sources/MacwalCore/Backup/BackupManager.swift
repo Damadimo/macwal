@@ -194,11 +194,37 @@ public struct BackupManager {
     public func restore(targets: [MacwalTarget], dryRun: Bool) throws -> RestoreSummary {
         var index = try loadIndex()
         let targetNames = Set(targets.map(\.rawValue))
-        let records = index.records.filter { targetNames.contains($0.adapter) }
+
+        // Restore newest-first. Sort by timestamp (falling back to original
+        // insertion order for identical timestamps) instead of relying on array
+        // order alone, so records written within the same second still unwind in
+        // the correct order.
+        let ordered = index.records.enumerated()
+            .filter { targetNames.contains($0.element.adapter) }
+            .sorted { lhs, rhs in
+                if lhs.element.timestamp != rhs.element.timestamp {
+                    return lhs.element.timestamp > rhs.element.timestamp
+                }
+                return lhs.offset > rhs.offset
+            }
+            .map(\.element)
+
         var restored: [String] = []
         var removed: [String] = []
+        var completedIDs = Set<String>()
 
-        for record in records.reversed() {
+        // Prune every record that was successfully restored, even if a later
+        // record throws. A re-run then resumes cleanly from the remaining
+        // records instead of replaying already-restored ones against a stale
+        // index.
+        defer {
+            if !dryRun && !completedIDs.isEmpty {
+                index.records.removeAll { completedIDs.contains($0.id) }
+                try? saveIndex(index)
+            }
+        }
+
+        for record in ordered {
             switch record.kind {
             case "file":
                 try restoreFile(record: record, restored: &restored, removed: &removed, dryRun: dryRun)
@@ -209,11 +235,7 @@ public struct BackupManager {
             default:
                 continue
             }
-        }
-
-        if !dryRun {
-            index.records.removeAll { targetNames.contains($0.adapter) }
-            try saveIndex(index)
+            completedIDs.insert(record.id)
         }
 
         return RestoreSummary(restored: restored.sorted(), removed: removed.sorted())
@@ -227,11 +249,7 @@ public struct BackupManager {
                     throw MacwalError.restoreFailed("Missing backup path for \(record.originalPath).")
                 }
                 if !dryRun {
-                    try fileSystem.ensureDirectory(originalURL.deletingLastPathComponent())
-                    if fileSystem.fileExists(originalURL) {
-                        try FileManager.default.removeItem(at: originalURL)
-                    }
-                    try FileManager.default.copyItem(at: URL(fileURLWithPath: backupPath), to: originalURL)
+                    try fileSystem.copyItem(at: URL(fileURLWithPath: backupPath), to: originalURL)
                 }
                 restored.append(record.originalPath)
             } else {
@@ -296,11 +314,6 @@ public struct BackupManager {
             }
             removed.append(displayPath)
         }
-    }
-
-    public func plannedRestore(targets: [MacwalTarget]) throws -> [BackupRecord] {
-        let targetNames = Set(targets.map(\.rawValue))
-        return try loadIndex().records.filter { targetNames.contains($0.adapter) }
     }
 
     private func loadIndex() throws -> BackupIndex {

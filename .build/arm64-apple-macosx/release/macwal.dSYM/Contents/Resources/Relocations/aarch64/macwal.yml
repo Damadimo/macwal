@@ -1,5 +1,0 @@
----
-triple:          'arm64-apple-darwin'
-binary-path:     '/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/macwal'
-relocations:     []
-...

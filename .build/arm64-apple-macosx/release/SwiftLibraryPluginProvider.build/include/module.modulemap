@@ -1,3 +1,0 @@
-module SwiftLibraryPluginProvider {
-    header "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/SwiftLibraryPluginProvider.build/include/SwiftLibraryPluginProvider-Swift.h"
-}

@@ -33,7 +33,7 @@ Behavior:
 - Inserts a managed `@import url("macwal.css");` block in `chrome/userChrome.css`.
 - Inserts a managed `@import url("macwal.css");` block in `chrome/userContent.css`.
 - Enables custom profile chrome CSS by writing `toolkit.legacyUserProfileCustomizations.stylesheets` in `user.js`.
-- Requires app restart to become visible.
+- These profiles load chrome CSS only at startup, so `macwal` quits and relaunches the app automatically to make the theme visible (set `MACWAL_SKIP_RESTART=1` to skip the restart).
 
 Profile roots:
 
@@ -55,7 +55,7 @@ Targets and writes:
 | `alacritty` | `~/.config/alacritty/macwal.toml`, import in `alacritty.toml` | Apply on config reload or app restart. |
 | `kitty` | `~/.config/kitty/macwal.conf`, include in `kitty.conf` | Attempts `kitty @ set-colors --all --configured`. |
 | `wezterm` | `~/.config/wezterm/macwal.lua`; creates `wezterm.lua` only if absent | Existing configs are not overwritten. |
-| `ghostty` | `~/.config/ghostty/themes/macwal`, managed `theme = macwal` in config | Apply on config reload or app restart. |
+| `ghostty` | `~/.config/ghostty/themes/macwal`, managed `theme = macwal` in config | Auto-quits and relaunches Ghostty to load the theme (set `MACWAL_SKIP_RESTART=1` to skip). |
 | `iterm2` | `~/Library/Application Support/iTerm2/DynamicProfiles/macwal.json` | iTerm2 loads dynamic profiles automatically; select `macwal` for new sessions. |
 
 ## Editor Targets
@@ -76,10 +76,10 @@ Targets and writes:
 | Target | Writes | Runtime behavior |
 | --- | --- | --- |
 | `tmux` | `~/.config/tmux/macwal.tmux`, managed source block in tmux config | Attempts `tmux source-file`. |
-| `starship` | `~/.config/starship-macwal.toml` | Palette fragment only; merge into existing prompt config if needed. |
+| `starship` | `[palettes.macwal]` block in `~/.config/starship.toml` | Activated by setting `palette = "macwal"` in the same file. |
 | `bat` | `~/.config/bat/themes/macwal.tmTheme`, managed `--theme=macwal` in bat config | Attempts `bat cache --build`. |
 | `btop` | `~/.config/btop/themes/macwal.theme`, `color_theme = "macwal"` in btop config | Applies on btop reload/restart. |
-| `yazi` | `~/.config/yazi/theme.toml` | Applies on yazi reload/restart. |
+| `yazi` | `~/.config/yazi/flavors/macwal.flavor/flavor.toml`, `[flavor]` selection in `~/.config/yazi/theme.toml` | Selects the macwal flavor; applies on yazi reload/restart. |
 | `fzf` | `~/.config/macwal/fzf.sh`, managed source block in shell rc files | Applies in new shells. |
 | `lazygit` | `~/Library/Application Support/lazygit/config.yml` if absent | Existing Lazygit config is not overwritten; generated merge file is written instead. |
 
@@ -95,11 +95,24 @@ Targets and writes:
 | `janky-borders` | `~/Library/Application Support/macwal/generated/janky-borders/macwal.sh` | Runs border color command when `borders` is on `PATH`. |
 | `hammerspoon` | `~/.hammerspoon/macwal.lua`, managed `dofile` block in `init.lua` | Attempts `hs -c hs.reload()`. |
 
+## Raycast
+
+Target: `raycast`
+
+Writes reusable palette assets plus a Raycast theme file:
+
+```text
+~/Library/Application Support/macwal/generated/raycast/colors.json
+~/Library/Application Support/macwal/generated/raycast/colors.css
+~/Library/Application Support/macwal/generated/raycast/macwal.raycasttheme
+```
+
+When Raycast is running, `macwal` opens the `.raycasttheme` to trigger Raycast's import flow (gated on `MACWAL_SKIP_RESTART`); confirm the import, then select `macwal` under Raycast Settings → Appearance. When Raycast is not running, importing it once is a manual step.
+
 ## Generated Asset Targets
 
 Targets:
 
-- `raycast`
 - `alfred`
 - `telegram`
 - `slack`
@@ -119,10 +132,11 @@ Writes:
 
 ```text
 ~/.config/Vencord/themes/macwal.css
-~/Library/Application Support/BetterDiscord/themes/macwal.theme.css
+~/.config/Vencord/settings/settings.json   (enables macwal.css)
+~/Library/Application Support/BetterDiscord/themes/macwal.theme.css   (only when that folder exists)
 ```
 
-The CSS theme files are generated automatically. The client must have the relevant mod and theme enabled for visual changes to appear.
+The Vencord theme is always written and enabled in Vencord's `settings.json` (`enabledThemes` includes `macwal.css`). A BetterDiscord theme is written only when the BetterDiscord themes folder already exists. Discord must reload (Cmd+R or restart) for the theme to appear; `macwal` does not force-restart Discord.
 
 ## Restore
 

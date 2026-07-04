@@ -69,7 +69,7 @@ public struct ObsidianAdapter {
 
     private func snippetURLs() -> [URL] {
         config.vaults.map { vaultPath in
-            URL(fileURLWithPath: vaultPath)
+            MacwalPaths.resolve(vaultPath, home: paths.home)
                 .appendingPathComponent(".obsidian/snippets/macwal.css")
         }
     }

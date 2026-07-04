@@ -339,10 +339,12 @@ struct MacwalCoreTests {
         #expect(try String(contentsOf: home.appendingPathComponent(".vimrc"), encoding: .utf8).contains("colorscheme macwal"))
         #expect(try String(contentsOf: home.appendingPathComponent(".config/nvim/init.vim"), encoding: .utf8).contains("colorscheme macwal"))
         #expect(try String(contentsOf: home.appendingPathComponent(".config/tmux/tmux.conf"), encoding: .utf8).contains("source-file ~/.config/tmux/macwal.tmux"))
-        #expect(try String(contentsOf: home.appendingPathComponent(".config/starship-macwal.toml"), encoding: .utf8).contains("[palettes.macwal]"))
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/starship.toml"), encoding: .utf8).contains("[palettes.macwal]"))
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/starship.toml"), encoding: .utf8).contains("palette = \"macwal\""))
         #expect(try String(contentsOf: home.appendingPathComponent(".config/bat/config"), encoding: .utf8).contains("--theme=macwal"))
         #expect(try String(contentsOf: home.appendingPathComponent(".config/btop/btop.conf"), encoding: .utf8).contains("color_theme = \"macwal\""))
-        #expect(try String(contentsOf: home.appendingPathComponent(".config/yazi/theme.toml"), encoding: .utf8).contains("[manager]"))
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/yazi/flavors/macwal.flavor/flavor.toml"), encoding: .utf8).contains("[mgr]"))
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/yazi/theme.toml"), encoding: .utf8).contains("dark = \"macwal\""))
         #expect(try String(contentsOf: home.appendingPathComponent(".config/macwal/fzf.sh"), encoding: .utf8).contains("FZF_DEFAULT_OPTS"))
         #expect(try String(contentsOf: home.appendingPathComponent("Library/Application Support/lazygit/config.yml"), encoding: .utf8).contains("activeBorderColor"))
         #expect(try String(contentsOf: home.appendingPathComponent(".config/aerospace/macwal.toml"), encoding: .utf8).contains("[macwal]"))
@@ -844,6 +846,7 @@ struct MacwalCoreTests {
         )
 
         var config = MacwalConfig.default
+        config.adapters.spotify.enabled = true
         config.adapters.spotify.spicetifyPath = "spicetify"
         try temp.writeConfig(config)
 
@@ -979,6 +982,128 @@ struct MacwalCoreTests {
         #expect(first.exitCode == 0)
         #expect(second.exitCode == 0)
         #expect(second.stdout.contains("No wallpaper or target changes detected"))
+    }
+
+    @MainActor
+    @Test func setAppliesTargetsAndReportsWallpaper() throws {
+        let temp = try TemporaryWorkspace()
+        let image = try temp.writePNG(named: "wall.png", colors: [
+            RGBColor(red: 16, green: 26, blue: 40),
+            RGBColor(red: 90, green: 170, blue: 190),
+            RGBColor(red: 214, green: 150, blue: 78)
+        ])
+        let runner = CommandRunner(environment: temp.environment)
+
+        // Explicit --targets keeps this deterministic (installed-detection would
+        // otherwise depend on what is installed on the test machine). Wallpaper
+        // setting is a no-op because TemporaryWorkspace sets MACWAL_SKIP_WALLPAPER.
+        let result = runner.run(arguments: [
+            "set",
+            "--image", image.path,
+            "--targets", "shell,chrome",
+            "--json"
+        ])
+
+        #expect(result.exitCode == 0)
+        let data = try #require(result.stdout.data(using: .utf8))
+        let response = try JSONDecoder().decode(CommandResponse.self, from: data)
+        #expect(response.success)
+        #expect(response.command == "set")
+        let responseData = try #require(response.data)
+        guard case .object(let root) = responseData,
+              case .string(let wallpaper)? = root["wallpaper"],
+              case .bool(let wallpaperChanged)? = root["wallpaperChanged"] else {
+            #expect(Bool(false), "Missing set wallpaper fields.")
+            return
+        }
+        #expect(wallpaper == image.path)
+        #expect(wallpaperChanged == false) // skipped by MACWAL_SKIP_WALLPAPER
+        #expect(response.messages.contains { $0.text.contains("Skipped setting wallpaper") })
+
+        // The theme was actually written for the requested targets.
+        let colorsSH = temp.appSupport.appendingPathComponent("generated/shell/colors.sh")
+        let manifest = temp.appSupport.appendingPathComponent("generated/chrome/macwal-theme/manifest.json")
+        #expect(FileManager.default.fileExists(atPath: colorsSH.path))
+        #expect(FileManager.default.fileExists(atPath: manifest.path))
+    }
+
+    @MainActor
+    @Test func setPicksRandomImageFromFolder() throws {
+        let temp = try TemporaryWorkspace()
+        let folder = temp.root.appendingPathComponent("Walls", isDirectory: true)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        var expectedPaths: Set<String> = []
+        for name in ["a.png", "b.png", "c.png"] {
+            let url = try temp.writePNG(named: "Walls/\(name)", colors: [
+                RGBColor(red: 20, green: 30, blue: 40),
+                RGBColor(red: 120, green: 160, blue: 180)
+            ])
+            expectedPaths.insert(url.standardizedFileURL.path)
+        }
+        let runner = CommandRunner(environment: temp.environment)
+
+        let result = runner.run(arguments: [
+            "set",
+            "--image", folder.path,
+            "--targets", "shell",
+            "--json"
+        ])
+
+        #expect(result.exitCode == 0)
+        let data = try #require(result.stdout.data(using: .utf8))
+        let response = try JSONDecoder().decode(CommandResponse.self, from: data)
+        let responseData = try #require(response.data)
+        guard case .object(let root) = responseData,
+              case .string(let wallpaper)? = root["wallpaper"] else {
+            #expect(Bool(false), "Missing chosen wallpaper.")
+            return
+        }
+        // The chosen wallpaper must be one of the images in the folder.
+        #expect(expectedPaths.contains(wallpaper))
+    }
+
+    @MainActor
+    @Test func setWithMissingImageFolderFails() throws {
+        let temp = try TemporaryWorkspace()
+        let empty = temp.root.appendingPathComponent("Empty", isDirectory: true)
+        try FileManager.default.createDirectory(at: empty, withIntermediateDirectories: true)
+        let runner = CommandRunner(environment: temp.environment)
+
+        let result = runner.run(arguments: [
+            "set",
+            "--image", empty.path,
+            "--targets", "shell",
+            "--json"
+        ])
+
+        #expect(result.exitCode != 0)
+    }
+
+    @Test func installedSupportedTargetsReflectsConfigAndExcludesSafari() throws {
+        let temp = try TemporaryWorkspace()
+        let paths = MacwalPaths(environment: temp.environment)
+        // Empty PATH so CLI-based detection is deterministic (no tools found).
+        var env = temp.environment.environment
+        env["PATH"] = "/tmp/macwal-tests-no-tools"
+        let commandExecutor = CommandExecutor(environment: env)
+
+        var config = MacwalConfig.default
+        config.adapters.obsidian.vaults = []
+        let registryNoVault = AdapterRegistry(paths: paths, config: config, commandExecutor: commandExecutor)
+        // Always-available targets are detected; safari is never in the set.
+        #expect(registryNoVault.isInstalled(.system))
+        #expect(registryNoVault.isInstalled(.shell))
+        #expect(registryNoVault.isInstalled(.terminal))
+        #expect(registryNoVault.isInstalled(.obsidian) == false)
+        #expect(registryNoVault.isInstalled(.spotify) == false) // spicetify not on PATH
+        #expect(registryNoVault.installedSupportedTargets(allowPrivate: false).contains(.safari) == false)
+        // Private targets require allowPrivate.
+        #expect(registryNoVault.installedSupportedTargets(allowPrivate: false).contains(.system) == false)
+        #expect(registryNoVault.installedSupportedTargets(allowPrivate: true).contains(.system))
+
+        config.adapters.obsidian.vaults = [temp.root.appendingPathComponent("Vault").path]
+        let registryWithVault = AdapterRegistry(paths: paths, config: config, commandExecutor: commandExecutor)
+        #expect(registryWithVault.isInstalled(.obsidian))
     }
 
     private var ansiKeys: [String] {
@@ -1155,6 +1280,11 @@ private struct TemporaryWorkspace {
         env["HOME"] = root.path
         env["MACWAL_HOME"] = root.path
         env["MACWAL_DEFAULTS_STORE"] = root.appendingPathComponent("Library/Application Support/macwal/test-defaults", isDirectory: true).path
+        // Never touch the real machine from tests: no app restarts/signals, no
+        // launchd (un)load, and no desktop wallpaper changes.
+        env["MACWAL_SKIP_RESTART"] = "1"
+        env["MACWAL_SKIP_LAUNCHCTL"] = "1"
+        env["MACWAL_SKIP_WALLPAPER"] = "1"
         for (key, value) in extraEnvironment {
             env[key] = value
         }

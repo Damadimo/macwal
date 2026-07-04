@@ -63,7 +63,12 @@ public struct TerminalAdapter {
         var messages = ["Terminal profile generated."]
         if config.setAsDefault {
             try installAsDefault(profile: profile)
-            messages = ["Terminal profile generated and installed as the default Terminal profile."]
+            let restartMessage = AppRestarter(commandExecutor: commandExecutor).restart(
+                appName: "Terminal",
+                processName: "Terminal",
+                selfTermProgram: "Apple_Terminal"
+            )
+            messages = ["Terminal profile generated and installed as the default Terminal profile.", restartMessage]
         } else {
             messages = ["Terminal profile generated. Direct Terminal preference mutation is disabled in config.json."]
         }
@@ -149,9 +154,11 @@ public struct TerminalAdapter {
             )
         }
 
-        var windowSettings = try defaults.readValue(domain: domain, key: "Window Settings") as? [String: Any] ?? [:]
-        windowSettings[config.profileName] = profile
-        try defaults.setValue(windowSettings, domain: domain, key: "Window Settings")
+        // Add only our profile under "Window Settings" with `-dict-add`; every
+        // other profile the user has defined is preserved. The whole-dictionary
+        // read/merge/write this replaced would silently drop sibling profiles
+        // whenever the read step returned an empty dictionary.
+        try defaults.addDictionaryEntry(profile, forKey: config.profileName, domain: domain, key: "Window Settings")
         try defaults.setValue(config.profileName, domain: domain, key: "Default Window Settings")
         try defaults.setValue(config.profileName, domain: domain, key: "Startup Window Settings")
     }

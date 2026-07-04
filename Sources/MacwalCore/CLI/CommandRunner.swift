@@ -84,6 +84,9 @@ public struct CommandRunner {
                 )
                 return try output(response, json: options.json, text: renderApplyText(summaries, dryRun: options.dryRun))
 
+            case "set":
+                return try runSet(options: options, paths: paths, configStore: configStore)
+
             case "restore":
                 let config = try configStore.load(createIfMissing: false)
                 let targets = try selectedTargetsForRestore(options: options, config: config)
@@ -137,40 +140,147 @@ public struct CommandRunner {
         }
     }
 
+    /// `macwal set` — the one-shot command. It generates a palette from an image
+    /// (or the current wallpaper), optionally sets that image as the desktop
+    /// wallpaper on every display, and applies the theme to every supported target
+    /// the user actually has installed.
+    @MainActor
+    private func runSet(options: CLIOptions, paths: MacwalPaths, configStore: ConfigStore) throws -> CommandRunResult {
+        let config = try configStore.load(createIfMissing: !options.dryRun)
+        let allowPrivate = options.allowPrivate || config.allowPrivateByDefault
+        let registry = AdapterRegistry(paths: paths, config: config, fileSystem: fileSystem, commandExecutor: commandExecutor)
+
+        let resolved = try paletteSource(options: options)
+        let palette = try PaletteGenerator().generate(from: resolved.url, source: resolved.source, config: config.palette)
+        // Only an explicit --image becomes the new wallpaper; when we fell back to
+        // the current wallpaper there is nothing to change.
+        let wallpaperURL: URL? = options.image != nil ? resolved.url : nil
+
+        // Explicit --targets overrides installed-detection; otherwise theme every
+        // supported target that is actually installed.
+        let targets: [MacwalTarget]
+        if let targetString = options.targets {
+            targets = try MacwalTarget.parseList(targetString, allowPrivate: allowPrivate)
+        } else {
+            targets = registry.installedSupportedTargets(allowPrivate: allowPrivate)
+        }
+
+        var messages: [ResponseMessage] = []
+        var wallpaperChanged = false
+        if let wallpaperURL {
+            if options.dryRun {
+                messages.append(.init(level: "info", text: "Dry run: wallpaper would be set to \(wallpaperURL.path)."))
+            } else if environment.environment["MACWAL_SKIP_WALLPAPER"] == "1" {
+                messages.append(.init(level: "info", text: "Skipped setting wallpaper (MACWAL_SKIP_WALLPAPER=1)."))
+            } else {
+                try wallpaperProvider.setWallpaper(wallpaperURL)
+                wallpaperChanged = true
+                messages.append(.init(level: "info", text: "Set desktop wallpaper to \(wallpaperURL.path)."))
+            }
+        } else {
+            messages.append(.init(level: "info", text: "No --image given; themed from the current wallpaper without changing it."))
+        }
+
+        let summaries = try registry.apply(targets: targets, palette: palette, allowPrivate: allowPrivate, dryRun: options.dryRun)
+        messages.insert(
+            .init(
+                level: "info",
+                text: options.dryRun
+                    ? "Set dry run completed for \(targets.count) installed target(s)."
+                    : "Applied theme to \(targets.count) installed target(s)."
+            ),
+            at: 0
+        )
+
+        let response = CommandResponse(
+            command: "set",
+            success: true,
+            messages: messages,
+            data: .object([
+                "dryRun": .bool(options.dryRun),
+                "wallpaperChanged": .bool(wallpaperChanged),
+                "wallpaper": wallpaperURL.map { JSONValue.string($0.path) } ?? .null,
+                "palette": palette.jsonValue(),
+                "targets": .array(summaries.map { $0.jsonValue() })
+            ])
+        )
+        return try output(
+            response,
+            json: options.json,
+            text: renderSetText(summaries, targets: targets, wallpaperURL: wallpaperURL, wallpaperChanged: wallpaperChanged, dryRun: options.dryRun)
+        )
+    }
+
     @MainActor
     private func buildPalette(options: CLIOptions, paths: MacwalPaths, config: MacwalConfig) throws -> PaletteDocument {
-        let sourceURL: URL
-        let source: PaletteSource
+        let resolved = try paletteSource(options: options)
+        return try PaletteGenerator().generate(from: resolved.url, source: resolved.source, config: config.palette)
+    }
 
+    /// Resolve the image the palette is generated from. When `--image` points at
+    /// a directory, a random image inside it is chosen. When `--image` is absent,
+    /// the current desktop wallpaper for the requested screen is used.
+    @MainActor
+    private func paletteSource(options: CLIOptions) throws -> (url: URL, source: PaletteSource) {
         if let imagePath = options.image {
-            let url = resolvePath(imagePath)
-            sourceURL = url
-            source = PaletteSource(kind: "image", path: url.path)
-        } else {
-            let wallpapers = try wallpaperProvider.wallpapers()
-            guard !wallpapers.isEmpty else {
-                throw MacwalError.paletteGenerationFailed("No desktop wallpaper image was reported by macOS. Pass --image PATH.")
-            }
-            let screenIndex = options.screenIndex ?? 0
-            guard let wallpaper = wallpapers.first(where: { $0.index == screenIndex }) else {
-                throw MacwalError.invalidArguments("Screen index \(screenIndex) is not available.")
-            }
-            sourceURL = wallpaper.url
-            source = PaletteSource(
+            let url = try resolveImageArgument(imagePath)
+            return (url, PaletteSource(kind: "image", path: url.path))
+        }
+
+        let wallpapers = try wallpaperProvider.wallpapers()
+        guard !wallpapers.isEmpty else {
+            throw MacwalError.paletteGenerationFailed("No desktop wallpaper image was reported by macOS. Pass --image PATH.")
+        }
+        let screenIndex = options.screenIndex ?? 0
+        guard let wallpaper = wallpapers.first(where: { $0.index == screenIndex }) else {
+            throw MacwalError.invalidArguments("Screen index \(screenIndex) is not available.")
+        }
+        return (
+            wallpaper.url,
+            PaletteSource(
                 kind: "wallpaper",
                 path: wallpaper.url.path,
                 screenIndex: wallpaper.index,
                 displayID: wallpaper.displayID
             )
-        }
+        )
+    }
 
-        return try PaletteGenerator().generate(from: sourceURL, source: source, config: config.palette)
+    /// Resolve a user-supplied `--image` argument to a concrete image file.
+    /// A directory resolves to a randomly chosen image inside it; a file must
+    /// exist. This is what lets `macwal set --image ~/Walls` rotate wallpapers.
+    private func resolveImageArgument(_ path: String) throws -> URL {
+        let url = resolvePath(path)
+        if fileSystem.isDirectory(url) {
+            return try pickRandomImage(in: url)
+        }
+        guard fileSystem.fileExists(url) else {
+            throw MacwalError.invalidArguments("Image path does not exist: \(url.path)")
+        }
+        return url
+    }
+
+    private static let imageFileExtensions: Set<String> = [
+        "png", "jpg", "jpeg", "heic", "heif", "gif", "bmp", "tiff", "tif", "webp"
+    ]
+
+    private func pickRandomImage(in directory: URL) throws -> URL {
+        let contents = try fileSystem.fileManager.contentsOfDirectory(
+            at: directory,
+            includingPropertiesForKeys: [.isRegularFileKey],
+            options: [.skipsHiddenFiles]
+        )
+        let images = contents.filter { Self.imageFileExtensions.contains($0.pathExtension.lowercased()) }
+        guard let choice = images.randomElement() else {
+            throw MacwalError.invalidArguments("No image files found in folder: \(directory.path)")
+        }
+        return choice.standardizedFileURL
     }
 
     private func resolvePath(_ path: String) -> URL {
-        let url = URL(fileURLWithPath: path)
-        if url.path.hasPrefix("/") {
-            return url.standardizedFileURL
+        let expanded = MacwalPaths.resolve(path, home: environment.homeDirectory)
+        if expanded.path.hasPrefix("/") {
+            return expanded.standardizedFileURL
         }
         return environment.currentDirectory.appendingPathComponent(path).standardizedFileURL
     }
@@ -259,7 +369,7 @@ public struct CommandRunner {
                 success: false,
                 messages: [.init(level: "error", text: error.localizedDescription)]
             )
-            let encoded = (try? response.encodedJSON()) ?? "{\"success\":false}\n"
+            let encoded = (try? response.encodedJSON()) ?? "{\"success\":false}"
             return CommandRunResult(exitCode: error.exitCode, stdout: encoded + "\n", stderr: "")
         }
         return CommandRunResult(exitCode: error.exitCode, stdout: "", stderr: error.localizedDescription + "\n")
@@ -554,6 +664,27 @@ public struct CommandRunner {
         return lines.joined(separator: "\n") + "\n"
     }
 
+    private func renderSetText(_ summaries: [AdapterApplySummary], targets: [MacwalTarget], wallpaperURL: URL?, wallpaperChanged: Bool, dryRun: Bool) -> String {
+        var lines = [dryRun ? "set dry run completed" : "set completed"]
+        if let wallpaperURL {
+            if dryRun {
+                lines.append("wallpaper: would set \(wallpaperURL.path)")
+            } else if wallpaperChanged {
+                lines.append("wallpaper: set \(wallpaperURL.path)")
+            } else {
+                lines.append("wallpaper: skipped \(wallpaperURL.path)")
+            }
+        } else {
+            lines.append("wallpaper: unchanged (themed from current wallpaper)")
+        }
+        lines.append("targets: \(targets.count) installed")
+        for summary in summaries {
+            lines.append("\(summary.target.rawValue): \(summary.changedPaths.count) path(s)")
+            lines.append(contentsOf: summary.messages.map { "  \($0)" })
+        }
+        return lines.joined(separator: "\n") + "\n"
+    }
+
     private func renderRestoreText(_ summary: RestoreSummary, dryRun: Bool) -> String {
         [
             dryRun ? "restore dry run completed" : "restore completed",
@@ -587,6 +718,7 @@ public struct CommandRunner {
     macwal
 
     Usage:
+      macwal set [--image PATH|FOLDER] [--targets TARGETS] [--allow-private] [--dry-run] [--json]
       macwal palette [--image PATH] [--screen INDEX] [--json]
       macwal preview [--image PATH] [--targets TARGETS] [--allow-private] [--json]
       macwal apply [--image PATH] [--targets TARGETS] [--allow-private] [--dry-run] [--json]
@@ -596,6 +728,14 @@ public struct CommandRunner {
       macwal watch run [--targets TARGETS] [--allow-private]
       macwal doctor [--json]
       macwal list-targets [--json]
+
+    set:
+      Themes every supported app you have installed and, when --image is given,
+      sets that image as the desktop wallpaper. If --image points at a folder, a
+      random image from it is chosen. Without --image it themes from the current
+      wallpaper without changing it. Use --targets to override installed-detection.
+
+    --image accepts a file or a folder (a random image is picked from the folder).
 
     Targets:
       Run `macwal list-targets` for the full target list.

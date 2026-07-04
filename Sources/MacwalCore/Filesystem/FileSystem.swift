@@ -13,18 +13,57 @@ public struct FileSystem {
         FileSystem(fileManager: fileManager, allowedWriteRoots: roots)
     }
 
+    /// Return a copy that also permits writing under `roots`, keeping the current
+    /// roots. Used for locations only discovered at runtime — e.g. browser
+    /// profile directories declared with absolute paths in `profiles.ini`, which
+    /// are not knowable when the static sandbox roots are computed. A no-op when
+    /// this filesystem is unrestricted.
+    public func allowingAdditional(_ roots: [URL]) -> FileSystem {
+        guard let allowedWriteRoots else {
+            return self
+        }
+        return FileSystem(fileManager: fileManager, allowedWriteRoots: allowedWriteRoots + roots)
+    }
+
     public func ensureDirectory(_ url: URL) throws {
         try validateWritePath(url)
         try fileManager.createDirectory(at: url, withIntermediateDirectories: true)
+    }
+
+    /// Create the directory tree needed to hold `fileURL`, WITHOUT validating the
+    /// directory against the write roots. Only call this after the file path
+    /// itself has passed `validateWritePath`: creating a file's ancestor
+    /// directories is inherent to writing that (already-allowed) file. This lets
+    /// an exact-file write root such as `~/.vimrc` work even though its parent
+    /// (`~`) is deliberately not a write root.
+    private func ensureParentDirectory(of fileURL: URL) throws {
+        try fileManager.createDirectory(at: fileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
     }
 
     public func fileExists(_ url: URL) -> Bool {
         fileManager.fileExists(atPath: url.path)
     }
 
+    public func isDirectory(_ url: URL) -> Bool {
+        var isDir: ObjCBool = false
+        return fileManager.fileExists(atPath: url.path, isDirectory: &isDir) && isDir.boolValue
+    }
+
+    /// Copy `source` to `destination`, enforcing the write-root sandbox on the
+    /// destination, creating intermediate directories, and replacing any
+    /// existing file at the destination.
+    public func copyItem(at source: URL, to destination: URL) throws {
+        try validateWritePath(destination)
+        try ensureParentDirectory(of: destination)
+        if fileExists(destination) {
+            try fileManager.removeItem(at: destination)
+        }
+        try fileManager.copyItem(at: source, to: destination)
+    }
+
     public func atomicWrite(_ data: Data, to url: URL) throws {
         try validateWritePath(url)
-        try ensureDirectory(url.deletingLastPathComponent())
+        try ensureParentDirectory(of: url)
         let temporary = url.deletingLastPathComponent()
             .appendingPathComponent(".\(url.lastPathComponent).\(UUID().uuidString).tmp")
         do {

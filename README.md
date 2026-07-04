@@ -3,6 +3,13 @@
 `macwal` is a macOS command-line theming tool inspired by `pywal`.
 It reads the current wallpaper or an explicit image, extracts a pywal-style contrast-safe palette, and applies generated theme assets to supported macOS and app-level surfaces.
 
+The fastest way in is `macwal set`: point it at an image (or a folder of images) and it themes every supported app you have installed and sets that image as your wallpaper in one step.
+
+```bash
+macwal set --image /path/to/wallpaper.jpg      # theme installed apps + set wallpaper
+macwal set --image ~/Pictures/Wallpapers        # pick a random image from the folder
+```
+
 ## Safety
 
 Every target is classified before it can write anything:
@@ -39,14 +46,16 @@ swift build
 | `terminal` | supported/private mixed | Generates and installs a `.terminal` profile as the default Terminal profile. |
 | `obsidian` | supported app config | Writes and enables CSS snippets in configured vaults. |
 | `chrome` | manual | Generates a Manifest V3 theme folder for manual loading. |
-| `firefox`, `librewolf`, `zen`, `floorp` | supported app config | Writes profile `userChrome.css`, `userContent.css`, and `user.js`; browser restart required. |
-| `spotify` | external | Generates and applies a Spicetify theme. |
-| `alacritty`, `kitty`, `wezterm`, `ghostty`, `iterm2` | supported / supported app config | Writes terminal color configuration; Kitty attempts live reload when available. |
-| `vscode`, `zed`, `vim`, `neovim` | supported / supported app config | Writes editor themes and enables them where a stable config file exists. |
-| `tmux`, `starship`, `bat`, `btop`, `yazi`, `fzf`, `lazygit` | supported / supported app config | Writes common TUI/CLI theme files and imports them when safe. |
+| `firefox`, `librewolf`, `zen`, `floorp` | supported app config | Writes profile `userChrome.css`, `userContent.css`, and `user.js`, then auto-quits and relaunches the browser to load it. |
+| `spotify` | external | Generates and applies a Spicetify theme (opt-in via `adapters.spotify.enabled`). |
+| `alacritty`, `kitty`, `wezterm`, `ghostty`, `iterm2` | supported / supported app config | Writes terminal color configuration; Kitty live-reloads, Ghostty auto-restarts, iTerm2 sets the profile as default. |
+| `vscode`, `zed`, `vim`, `neovim` | supported / supported app config | Writes editor themes and activates them (VS Code / Zed `settings.json`, `.vimrc`/`init`). |
+| `tmux`, `starship`, `bat`, `btop`, `yazi`, `fzf`, `lazygit` | supported / supported app config | Writes common TUI/CLI theme files and activates them (Starship `palette`, Yazi flavor, bat/btop config) when safe. |
 | `aerospace`, `yabai`, `sketchybar`, `janky-borders`, `hammerspoon` | supported / external | Writes macOS tool color configs; runs available CLI reload/config commands for supported tools. |
-| `raycast`, `alfred`, `discord`, `telegram`, `slack` | manual | Generates palette/theme assets where stable automatic activation is unavailable. |
-| `thunderbird` | supported app config | Writes Thunderbird profile chrome CSS and `user.js`; restart required. |
+| `discord` | manual | Writes a Vencord theme and enables it in Vencord settings; also writes a BetterDiscord theme when that folder exists. |
+| `raycast` | manual | Writes a `.raycasttheme` and imports it when Raycast is running; otherwise import is one manual step. |
+| `alfred`, `telegram`, `slack` | manual | Generates palette/theme assets where stable automatic activation is unavailable. |
+| `thunderbird` | supported app config | Writes Thunderbird profile chrome CSS and `user.js`, then auto-quits and relaunches Thunderbird. |
 | `safari` | supported system inheritance only | Informational no-op; Safari follows system appearance. |
 | `system` | private | Optionally writes global macOS appearance preferences. Requires `--allow-private`. |
 | `finder` | private | Optionally applies a reversible colored Finder tag xattr to configured folders. Requires `--allow-private`. |
@@ -82,7 +91,7 @@ For Firefox-family browsers and dotfile-driven terminals/editors, explicit targe
 macwal apply --image /path/to/wallpaper.jpg --targets firefox,kitty,wezterm,vscode,tmux,btop
 ```
 
-Firefox-family browsers and Thunderbird require an app restart because their chrome CSS is only loaded at startup. Most terminal/editor targets apply on the next app reload or new session; Kitty, tmux, yabai, sketchybar, janky-borders, and Hammerspoon also attempt their runtime reload command when the tool is available.
+Firefox-family browsers, Thunderbird, Terminal.app, and Ghostty load their theme only at startup, so `macwal` **automatically quits and relaunches them** after writing (this can lose open tabs or unsaved state — set `MACWAL_SKIP_RESTART=1` to skip every restart/reload/live-flip). Most terminal/editor targets apply on the next app reload or new session; Kitty, tmux, yabai, sketchybar, janky-borders, and Hammerspoon also attempt their runtime reload command when the tool is available.
 
 Do not start with `system` or `finder` on a primary account. Those paths use undocumented preferences or extended attributes and require explicit `--allow-private`.
 
@@ -99,6 +108,7 @@ scripts/smoke.sh
 ## Commands
 
 ```bash
+macwal set [--image PATH|FOLDER] [--targets TARGETS] [--allow-private] [--dry-run] [--json]
 macwal palette [--image PATH] [--screen INDEX] [--json]
 macwal preview [--image PATH] [--targets TARGETS] [--allow-private] [--json]
 macwal apply [--image PATH] [--targets TARGETS] [--allow-private] [--dry-run] [--json]
@@ -109,6 +119,22 @@ macwal watch run [--targets TARGETS] [--allow-private]
 macwal doctor [--json]
 macwal list-targets [--json]
 ```
+
+### `set` — one-shot theming
+
+```bash
+macwal set --image /path/to/wallpaper.jpg
+```
+
+`set` is the batteries-included command:
+
+- It applies the theme to **every supported target you actually have installed** (detected from installed apps, CLIs on `PATH`, and config directories), so you do not have to enumerate `--targets`.
+- When you pass `--image PATH`, it also sets that image as the desktop wallpaper on every display.
+- When `--image` is a **folder**, it picks a random image from that folder and uses it (great for wallpaper rotation).
+- Without `--image`, it themes from your current wallpaper without changing it.
+- Pass `--targets` to override installed-detection, `--allow-private` to include `system`/`finder`, and `--dry-run` to preview without writing.
+
+`--image` accepts a file or a folder anywhere `apply`/`preview`/`palette` accept `--image`.
 
 `TARGETS` is a comma-separated list:
 
@@ -195,7 +221,7 @@ Chrome does not expose a supported per-user CLI/API that silently activates an u
 
 ### Firefox-Family Browser Restart
 
-Firefox, LibreWolf, Zen, Floorp, and Thunderbird load `userChrome.css` and `userContent.css` at startup. After applying one of these targets, quit and reopen the app.
+Firefox, LibreWolf, Zen, Floorp, and Thunderbird load `userChrome.css` and `userContent.css` at startup. `macwal` quits and relaunches the app automatically so the theme takes effect immediately; if the browser is hosting your current session or you prefer to restart manually, set `MACWAL_SKIP_RESTART=1`.
 
 `macwal` updates this profile preference automatically:
 
@@ -254,8 +280,8 @@ The watcher installs `~/Library/LaunchAgents/io.macwal.watch.plist`. It runs `ma
 
 - Safari browser chrome cannot be directly themed.
 - Chrome generated themes cannot be silently activated through supported per-user Chrome APIs.
-- Firefox-family browser theming requires restart.
+- Firefox-family browsers, Thunderbird, Terminal.app, and Ghostty are auto-restarted to apply the theme, which can discard open tabs or unsaved state (`MACWAL_SKIP_RESTART=1` disables this).
 - Dock and menu bar system icons cannot be directly recolored.
-- Raycast, Alfred, Telegram, and Slack do not expose stable user-owned theme dotfiles for silent activation, so macwal generates palette assets only.
+- Alfred, Telegram, and Slack do not expose stable user-owned theme dotfiles for silent activation, so macwal generates palette assets only. Raycast is imported when running; Discord is enabled via Vencord.
 - Finder folder tinting uses Tahoe's colored-tag behavior, not the full Customize Folder payload.
 - Private adapters use undocumented macOS behavior and may change between macOS releases.

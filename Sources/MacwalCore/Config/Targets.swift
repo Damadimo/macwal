@@ -105,19 +105,19 @@ public enum MacwalTarget: String, CaseIterable, Codable, Sendable {
         case .shell:
             "Writes generated shell, JSON, CSS, and Xresources files."
         case .terminal:
-            "Generates and installs a Terminal.app profile as the default profile."
+            "Generates and installs a Terminal.app profile as the default profile, then quits and relaunches Terminal.app."
         case .obsidian:
             "Writes CSS snippets to configured vaults."
         case .chrome:
             "Generates a Manifest V3 theme folder; Chrome has no supported per-user silent activation API."
         case .firefox:
-            "Writes Firefox profile userChrome/userContent CSS and user.js preferences; Firefox restart required."
+            "Writes Firefox profile userChrome/userContent CSS and user.js preferences, then quits and relaunches Firefox."
         case .librewolf:
-            "Writes LibreWolf profile CSS and user.js preferences; restart required."
+            "Writes LibreWolf profile CSS and user.js preferences, then quits and relaunches LibreWolf."
         case .zen:
-            "Writes Zen Browser profile CSS and user.js preferences; restart required."
+            "Writes Zen Browser profile CSS and user.js preferences, then quits and relaunches Zen."
         case .floorp:
-            "Writes Floorp profile CSS and user.js preferences; restart required."
+            "Writes Floorp profile CSS and user.js preferences, then quits and relaunches Floorp."
         case .safari:
             "No direct browser chrome theming; Safari inherits system appearance."
         case .spotify:
@@ -129,13 +129,13 @@ public enum MacwalTarget: String, CaseIterable, Codable, Sendable {
         case .wezterm:
             "Writes a WezTerm Lua color scheme."
         case .ghostty:
-            "Writes a Ghostty theme file and selects it from config."
+            "Writes a Ghostty theme file, selects it from config, then quits and relaunches Ghostty."
         case .iterm2:
-            "Writes an iTerm2 Dynamic Profile color scheme."
+            "Writes an iTerm2 Dynamic Profile color scheme and sets it as the default profile."
         case .vscode:
             "Writes a VS Code theme extension and selects it when settings.json is valid JSON."
         case .zed:
-            "Writes a Zed theme JSON file."
+            "Writes a Zed theme JSON file and selects it in settings.json."
         case .vim:
             "Writes a Vim colorscheme and enables it from .vimrc."
         case .neovim:
@@ -143,13 +143,13 @@ public enum MacwalTarget: String, CaseIterable, Codable, Sendable {
         case .tmux:
             "Writes a tmux theme file, sources it from tmux.conf, and attempts reload."
         case .starship:
-            "Writes a Starship palette fragment."
+            "Writes a Starship palette to starship.toml and activates it via the palette key."
         case .bat:
             "Writes a bat theme and configures bat to use it."
         case .btop:
             "Writes a btop theme and configures btop to use it."
         case .yazi:
-            "Writes a Yazi theme file."
+            "Writes a Yazi flavor and references it from theme.toml when no conflicting flavor is set."
         case .fzf:
             "Writes fzf color exports and sources them from common shell rc files."
         case .lazygit:
@@ -163,15 +163,15 @@ public enum MacwalTarget: String, CaseIterable, Codable, Sendable {
         case .jankyBorders:
             "Runs janky borders color commands when borders is available."
         case .hammerspoon:
-            "Writes Hammerspoon Lua colors and loads them from init.lua."
+            "Writes Hammerspoon Lua colors as hs.macwalColors and loads them from init.lua; a reload is required to take effect."
         case .raycast:
-            "Generates Raycast palette assets only; Raycast theme activation is not file-configurable."
+            "Writes a Raycast theme file and imports it when Raycast is running; otherwise import is one manual step."
         case .alfred:
             "Generates Alfred palette assets only; automatic activation is not implemented."
         case .discord:
-            "Writes Vencord/BetterDiscord CSS theme files when theme folders exist."
+            "Writes a Vencord/BetterDiscord CSS theme and enables it in Vencord settings when a themes folder exists."
         case .thunderbird:
-            "Writes Thunderbird profile userChrome CSS and user.js preferences; restart required."
+            "Writes Thunderbird profile userChrome CSS and user.js preferences, then quits and relaunches Thunderbird."
         case .telegram:
             "Generates Telegram Desktop theme assets only; activation remains manual."
         case .slack:

@@ -33,6 +33,14 @@ public struct SpotifyAdapter {
     }
 
     public func preview() -> AdapterPlan {
+        guard config.enabled else {
+            return AdapterPlan(
+                target: .spotify,
+                status: "noop",
+                messages: ["Spotify theming is disabled in config.json (adapters.spotify.enabled = false)."]
+            )
+        }
+
         let available = commandExecutor.executablePath(config.spicetifyPath) != nil
         return AdapterPlan(
             target: .spotify,
@@ -48,6 +56,14 @@ public struct SpotifyAdapter {
     }
 
     public func apply(palette: PaletteDocument, dryRun: Bool) throws -> AdapterApplySummary {
+        guard config.enabled else {
+            return AdapterApplySummary(
+                target: .spotify,
+                changedPaths: [],
+                messages: ["Spotify theming is disabled in config.json (adapters.spotify.enabled = false)."]
+            )
+        }
+
         guard commandExecutor.executablePath(config.spicetifyPath) != nil else {
             throw MacwalError.missingPrerequisite("Spicetify is required for target 'spotify'. Install Spicetify, then rerun this command.")
         }

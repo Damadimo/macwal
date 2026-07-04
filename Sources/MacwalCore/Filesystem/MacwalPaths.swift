@@ -26,4 +26,19 @@ public struct MacwalPaths: Sendable {
         self.logs = appSupport.appendingPathComponent("logs", isDirectory: true)
         self.launchAgent = home.appendingPathComponent("Library/LaunchAgents/io.macwal.watch.plist")
     }
+
+    /// Resolve a user-supplied path, expanding a leading `~` against `home`.
+    /// User-configured locations (Obsidian vaults, Finder folders) are commonly
+    /// written as `~/Notes`; without this they would be treated as a literal
+    /// folder named `~`, so both the sandbox roots and the adapters must expand
+    /// them identically.
+    public static func resolve(_ path: String, home: URL) -> URL {
+        if path == "~" {
+            return home
+        }
+        if path.hasPrefix("~/") {
+            return home.appendingPathComponent(String(path.dropFirst(2)))
+        }
+        return URL(fileURLWithPath: path)
+    }
 }

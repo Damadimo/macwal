@@ -5,10 +5,6 @@ public struct ProcessResult: Equatable, Sendable {
     public let stdout: Data
     public let stderr: Data
 
-    public var stdoutText: String {
-        String(decoding: stdout, as: UTF8.self)
-    }
-
     public var stderrText: String {
         String(decoding: stderr, as: UTF8.self)
     }
@@ -36,39 +32,35 @@ public struct CommandExecutor: Sendable {
         return nil
     }
 
-    public func run(
-        executable: String,
-        arguments: [String],
-        workingDirectory: URL? = nil,
-        stdin: Data? = nil
-    ) throws -> ProcessResult {
+    public func run(executable: String, arguments: [String]) throws -> ProcessResult {
         let resolved = executablePath(executable) ?? executable
         let process = Process()
         process.executableURL = URL(fileURLWithPath: resolved)
         process.arguments = arguments
         process.environment = environment
-        if let workingDirectory {
-            process.currentDirectoryURL = workingDirectory
-        }
 
         let stdout = Pipe()
-        let stderr = Pipe()
         process.standardOutput = stdout
-        process.standardError = stderr
 
-        if let stdin {
-            let input = Pipe()
-            process.standardInput = input
-            try process.run()
-            input.fileHandleForWriting.write(stdin)
-            try input.fileHandleForWriting.close()
-        } else {
-            try process.run()
+        // Route stderr to a temporary file rather than a second pipe. Reading two
+        // pipes sequentially (stdout to EOF, then stderr) deadlocks whenever a
+        // child fills the stderr pipe buffer while we are still blocked draining
+        // stdout. A file sink has no bounded buffer, so the child can never block
+        // on stderr, and we drain the single stdout pipe with no ordering hazard.
+        let stderrURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("macwal-stderr-\(UUID().uuidString)")
+        FileManager.default.createFile(atPath: stderrURL.path, contents: nil)
+        let stderrHandle = try FileHandle(forWritingTo: stderrURL)
+        process.standardError = stderrHandle
+        defer {
+            try? FileManager.default.removeItem(at: stderrURL)
         }
 
+        try process.run()
         let stdoutData = stdout.fileHandleForReading.readDataToEndOfFile()
-        let stderrData = stderr.fileHandleForReading.readDataToEndOfFile()
         process.waitUntilExit()
+        try? stderrHandle.close()
+        let stderrData = (try? Data(contentsOf: stderrURL)) ?? Data()
 
         return ProcessResult(
             exitCode: process.terminationStatus,

@@ -16,6 +16,8 @@ public struct WallpaperRecord: Equatable, Sendable {
 @MainActor
 public protocol WallpaperProviding {
     func wallpapers() throws -> [WallpaperRecord]
+    /// Set the desktop wallpaper on every attached display to `url`.
+    func setWallpaper(_ url: URL) throws
 }
 
 public struct AppKitWallpaperProvider: WallpaperProviding {
@@ -30,6 +32,20 @@ public struct AppKitWallpaperProvider: WallpaperProviding {
 
             let displayID = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? UInt32
             return WallpaperRecord(index: index, displayID: displayID, url: url)
+        }
+    }
+
+    public func setWallpaper(_ url: URL) throws {
+        let workspace = NSWorkspace.shared
+        let screens = NSScreen.screens
+        guard !screens.isEmpty else {
+            throw MacwalError.adapterFailed("No displays are attached; cannot set the desktop wallpaper.")
+        }
+        // Preserve each display's existing scaling/fill options so setting the
+        // image does not reset the user's fit-to-screen preference.
+        for screen in screens {
+            let options = workspace.desktopImageOptions(for: screen) ?? [:]
+            try workspace.setDesktopImageURL(url, for: screen, options: options)
         }
     }
 }

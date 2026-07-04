@@ -29,7 +29,7 @@ public struct SystemAdapter {
         self.commandExecutor = commandExecutor
     }
 
-    public func preview(palette: PaletteDocument?) -> AdapterPlan {
+    public func preview() -> AdapterPlan {
         var writes: [String] = []
         if config.setAppearanceMode {
             writes.append("\(domain):AppleInterfaceStyle")
@@ -63,13 +63,22 @@ public struct SystemAdapter {
             changed.append("\(domain):AppleInterfaceStyle")
             changed.append("\(domain):AppleInterfaceStyleSwitchesAutomatically")
 
+            let wantDark = palette.appearance.recommendedMode == "dark"
             if !dryRun {
-                if palette.appearance.recommendedMode == "dark" {
+                // Persist the choice via defaults so it survives even if the
+                // live flip below is denied Automation permission.
+                if wantDark {
                     try defaults.setValue("Dark", domain: domain, key: "AppleInterfaceStyle")
                 } else {
                     try defaults.deleteValue(domain: domain, key: "AppleInterfaceStyle")
                 }
                 try defaults.setValue(false, domain: domain, key: "AppleInterfaceStyleSwitchesAutomatically")
+
+                // A defaults write alone does not restyle already-open apps; the
+                // System Events toggle flips the whole desktop live.
+                if let warning = setDarkModeLive(wantDark) {
+                    messages.append(warning)
+                }
             }
             messages.append("System appearance mode set to \(palette.appearance.recommendedMode).")
         }
@@ -143,8 +152,29 @@ public struct SystemAdapter {
         return red * red + green * green + blue * blue
     }
 
+    /// Flip the whole desktop's light/dark appearance live via System Events.
+    /// Returns a warning string if the flip could not be performed (the value is
+    /// still saved to defaults and takes effect on next login), or nil on success.
+    private func setDarkModeLive(_ dark: Bool) -> String? {
+        if commandExecutor.environment["MACWAL_SKIP_RESTART"] != nil {
+            return "Live appearance flip skipped (MACWAL_SKIP_RESTART set); the change is saved and applies on next login."
+        }
+        let script = "tell application \"System Events\" to tell appearance preferences to set dark mode to \(dark ? "true" : "false")"
+        guard let result = try? commandExecutor.run(executable: "/usr/bin/osascript", arguments: ["-e", script]) else {
+            return "Could not run osascript to flip appearance live; the change applies on next login."
+        }
+        if result.exitCode != 0 {
+            return "Live appearance flip needs Automation permission for your terminal (System Settings → Privacy & Security → Automation); the change is saved and applies on next login."
+        }
+        return nil
+    }
+
     private func postAppearanceNotifications() {
-        for name in ["AppleColorPreferencesChangedNotification", "AppleAquaColorVariantChanged"] {
+        for name in [
+            "AppleColorPreferencesChangedNotification",
+            "AppleAquaColorVariantChanged",
+            "AppleInterfaceThemeChangedNotification"
+        ] {
             DistributedNotificationCenter.default().post(name: Notification.Name(name), object: nil)
         }
     }

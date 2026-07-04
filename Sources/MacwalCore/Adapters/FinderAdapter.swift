@@ -27,7 +27,7 @@ public struct FinderAdapter {
         self.backupManager = backupManager
     }
 
-    public func preview(palette: PaletteDocument?) -> AdapterPlan {
+    public func preview() -> AdapterPlan {
         if !config.setFolderTint {
             return AdapterPlan(
                 target: .finder,
@@ -97,7 +97,7 @@ public struct FinderAdapter {
     }
 
     private func validateFolderPath(_ rawPath: String) throws -> URL {
-        let url = URL(fileURLWithPath: rawPath).standardizedFileURL
+        let url = MacwalPaths.resolve(rawPath, home: paths.home).standardizedFileURL
         var isDirectory: ObjCBool = false
         guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory), isDirectory.boolValue else {
             throw MacwalError.missingPrerequisite("Configured Finder path is not a folder: \(url.path)")

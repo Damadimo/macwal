@@ -65,7 +65,7 @@ public struct GeneratedAppAdapter {
         case .vscode:
             return try applyVSCode(palette: palette, dryRun: dryRun)
         case .zed:
-            return try writeGeneratedFiles(files: zedFiles(palette), dryRun: dryRun, messages: ["Zed theme file written."])
+            return try applyZed(palette: palette, dryRun: dryRun)
         case .vim:
             return try applyVim(palette: palette, dryRun: dryRun)
         case .neovim:
@@ -73,13 +73,13 @@ public struct GeneratedAppAdapter {
         case .tmux:
             return try applyTmux(palette: palette, dryRun: dryRun)
         case .starship:
-            return try writeGeneratedFiles(files: starshipFiles(palette), dryRun: dryRun, messages: ["Starship palette fragment written. Add or merge it into starship.toml if you already have a config."])
+            return try applyStarship(palette: palette, dryRun: dryRun)
         case .bat:
             return try applyBat(palette: palette, dryRun: dryRun)
         case .btop:
             return try applyBtop(palette: palette, dryRun: dryRun)
         case .yazi:
-            return try writeGeneratedFiles(files: yaziFiles(palette), dryRun: dryRun, messages: ["Yazi theme.toml written."])
+            return try applyYazi(palette: palette, dryRun: dryRun)
         case .fzf:
             return try applyFzf(palette: palette, dryRun: dryRun)
         case .lazygit:
@@ -94,7 +94,9 @@ public struct GeneratedAppAdapter {
             return try applyCommandTarget(palette: palette, dryRun: dryRun, executable: "borders", arguments: jankyBordersCommands(palette), generatedFiles: jankyBordersFiles(palette))
         case .hammerspoon:
             return try applyHammerspoon(palette: palette, dryRun: dryRun)
-        case .raycast, .alfred, .telegram, .slack:
+        case .raycast:
+            return try applyRaycast(palette: palette, dryRun: dryRun)
+        case .alfred, .telegram, .slack:
             return try writeGeneratedFiles(files: genericManualFiles(palette), dryRun: dryRun, messages: ["Generated palette assets for \(displayName). Automatic activation is not exposed through stable user dotfiles."])
         case .discord:
             return try applyDiscord(palette: palette, dryRun: dryRun)
@@ -103,27 +105,85 @@ public struct GeneratedAppAdapter {
         }
     }
 
-    public static func writeRoots(for target: MacwalTarget, paths: MacwalPaths) -> [URL] {
+    /// Precise per-target write sandbox. Every target lists exactly the
+    /// directories (and, for dotfiles that live directly under `$HOME`, exact
+    /// files) it writes to. This deliberately no longer includes `paths.home`
+    /// itself — a root of the whole home directory defeated the sandbox. Browser
+    /// profiles discovered at absolute paths are added at apply time via
+    /// `FileSystem.allowingAdditional`.
+    public static func writeRoots(for target: MacwalTarget, paths: MacwalPaths, environment: [String: String] = [:]) -> [URL] {
+        func home(_ path: String, isDirectory: Bool = true) -> URL {
+            paths.home.appendingPathComponent(path, isDirectory: isDirectory)
+        }
+        var roots: [URL] = [paths.appSupport]
+
         switch target {
         case .firefox:
-            return [paths.appSupport, paths.home.appendingPathComponent("Library/Application Support/Firefox", isDirectory: true)]
+            roots.append(home("Library/Application Support/Firefox"))
         case .librewolf:
-            return [paths.appSupport, paths.home.appendingPathComponent("Library/Application Support/LibreWolf", isDirectory: true)]
+            roots.append(home("Library/Application Support/LibreWolf"))
         case .zen:
-            return [
-                paths.appSupport,
-                paths.home.appendingPathComponent("Library/Application Support/Zen", isDirectory: true),
-                paths.home.appendingPathComponent("Library/Application Support/zen", isDirectory: true)
-            ]
+            roots.append(home("Library/Application Support/Zen"))
+            roots.append(home("Library/Application Support/zen"))
         case .floorp:
-            return [paths.appSupport, paths.home.appendingPathComponent("Library/Application Support/Floorp", isDirectory: true)]
+            roots.append(home("Library/Application Support/Floorp"))
         case .thunderbird:
-            return [paths.appSupport, paths.home.appendingPathComponent("Library/Thunderbird", isDirectory: true)]
-        case .iterm2, .vscode:
-            return [paths.appSupport, paths.home.appendingPathComponent("Library/Application Support", isDirectory: true), paths.home.appendingPathComponent(".vscode", isDirectory: true)]
+            roots.append(home("Library/Thunderbird"))
+        case .alacritty:
+            roots.append(home(".config/alacritty"))
+        case .kitty:
+            roots.append(home(".config/kitty"))
+        case .wezterm:
+            roots.append(home(".config/wezterm"))
+        case .ghostty:
+            roots.append(home(".config/ghostty"))
+        case .iterm2:
+            roots.append(home("Library/Application Support/iTerm2"))
+        case .vscode:
+            roots.append(home(".vscode"))
+            roots.append(home("Library/Application Support/Code/User"))
+        case .zed:
+            roots.append(home(".config/zed"))
+        case .vim:
+            roots.append(home(".vim"))
+            roots.append(home(".vimrc", isDirectory: false))
+        case .neovim:
+            roots.append(home(".config/nvim"))
+        case .tmux:
+            roots.append(home(".config/tmux"))
+            roots.append(home(".tmux.conf", isDirectory: false))
+        case .starship:
+            roots.append(home(".config/starship.toml", isDirectory: false))
+        case .bat:
+            roots.append(home(".config/bat"))
+        case .btop:
+            roots.append(home(".config/btop"))
+        case .yazi:
+            roots.append(home(".config/yazi"))
+        case .fzf:
+            roots.append(home(".config/macwal"))
+            roots.append(home(".zshrc", isDirectory: false))
+            roots.append(home(".bashrc", isDirectory: false))
+        case .lazygit:
+            roots.append(home(".config/lazygit"))
+            roots.append(home("Library/Application Support/lazygit"))
+            if let xdg = environment["XDG_CONFIG_HOME"], !xdg.isEmpty {
+                roots.append(MacwalPaths.resolve(xdg, home: paths.home).appendingPathComponent("lazygit", isDirectory: true))
+            }
+        case .aerospace:
+            roots.append(home(".config/aerospace"))
+        case .hammerspoon:
+            roots.append(home(".hammerspoon"))
+        case .discord:
+            roots.append(home(".config/Vencord"))
+            roots.append(home("Library/Application Support/BetterDiscord"))
+        case .yabai, .sketchybar, .jankyBorders, .raycast, .alfred, .telegram, .slack:
+            // These only write generated assets under macwal's app support.
+            break
         default:
-            return [paths.appSupport, paths.home.appendingPathComponent(".config", isDirectory: true), paths.home]
+            break
         }
+        return roots
     }
 
     private var isBrowserProfileTarget: Bool {
@@ -165,8 +225,6 @@ public struct GeneratedAppAdapter {
         switch target {
         case .raycast, .alfred, .telegram, .slack:
             return ["Generates palette assets only; automatic activation is not exposed through stable user dotfiles."]
-        case .chrome:
-            return ["Chrome is handled by ChromeAdapter."]
         default:
             return ["Writes generated \(displayName) theme configuration."]
         }
@@ -185,9 +243,9 @@ public struct GeneratedAppAdapter {
         case .iterm2:
             return [itermDynamicProfileURL]
         case .vscode:
-            return vscodeFiles(nil).map(\.url)
+            return vscodeFiles(nil).map(\.url) + [vscodeSettingsURL]
         case .zed:
-            return zedFiles(nil).map(\.url)
+            return zedFiles(nil).map(\.url) + [zedSettingsURL]
         case .vim:
             return [vimThemeURL, vimrcURL]
         case .neovim:
@@ -195,13 +253,13 @@ public struct GeneratedAppAdapter {
         case .tmux:
             return [tmuxThemeURL, tmuxConfigURL]
         case .starship:
-            return starshipFiles(nil).map(\.url)
+            return [starshipConfigURL]
         case .bat:
             return [batThemeURL, batConfigURL]
         case .btop:
             return [btopThemeURL, btopConfigURL]
         case .yazi:
-            return yaziFiles(nil).map(\.url)
+            return [yaziFlavorURL, yaziThemeURL]
         case .fzf:
             return [fzfScriptURL, zshrcURL, bashrcURL]
         case .lazygit:
@@ -216,7 +274,9 @@ public struct GeneratedAppAdapter {
             return jankyBordersFiles(nil).map(\.url)
         case .hammerspoon:
             return [hammerspoonThemeURL, hammerspoonInitURL]
-        case .raycast, .alfred, .telegram, .slack:
+        case .raycast:
+            return genericManualFiles(nil).map(\.url) + [paths.generated.appendingPathComponent("raycast/macwal.raycasttheme")]
+        case .alfred, .telegram, .slack:
             return genericManualFiles(nil).map(\.url)
         case .discord:
             return discordFiles(nil).map(\.url)
@@ -246,6 +306,11 @@ public struct GeneratedAppAdapter {
             return AdapterApplySummary(target: target, changedPaths: changed.map(\.path), messages: ["Dry run: no \(displayName) profile files were written."])
         }
 
+        // Profiles can live at absolute paths declared in profiles.ini
+        // (IsRelative=0). Widen the sandbox to those discovered roots so writing
+        // to a non-standard profile location is not refused.
+        let fs = fileSystem.allowingAdditional(profiles.map(\.root))
+
         for profile in profiles {
             let chrome = profile.root.appendingPathComponent("chrome", isDirectory: true)
             let cssURL = chrome.appendingPathComponent("macwal.css")
@@ -257,20 +322,23 @@ public struct GeneratedAppAdapter {
             try backupManager.backupFileBeforeWrite(userChromeURL, adapter: target, dryRun: false)
             try backupManager.backupFileBeforeWrite(userContentURL, adapter: target, dryRun: false)
             try backupManager.backupFileBeforeWrite(userJSURL, adapter: target, dryRun: false)
-            try fileSystem.atomicWriteString(try renderFirefoxCSS(palette), to: cssURL)
-            try fileSystem.atomicWriteString(upsertManagedBlock(
+            try fs.atomicWriteString(try renderFirefoxCSS(palette), to: cssURL)
+            // `@import` must precede all other rules, so prepend these blocks.
+            try fs.atomicWriteString(upsertManagedBlock(
                 in: userChromeURL,
                 body: "@import url(\"macwal.css\");",
                 commentPrefix: "/*",
-                commentSuffix: "*/"
+                commentSuffix: "*/",
+                prepend: true
             ), to: userChromeURL)
-            try fileSystem.atomicWriteString(upsertManagedBlock(
+            try fs.atomicWriteString(upsertManagedBlock(
                 in: userContentURL,
                 body: "@import url(\"macwal.css\");",
                 commentPrefix: "/*",
-                commentSuffix: "*/"
+                commentSuffix: "*/",
+                prepend: true
             ), to: userContentURL)
-            try fileSystem.atomicWriteString(upsertManagedBlock(
+            try fs.atomicWriteString(upsertManagedBlock(
                 in: userJSURL,
                 body: "user_pref(\"toolkit.legacyUserProfileCustomizations.stylesheets\", true);",
                 commentPrefix: "//",
@@ -278,11 +346,34 @@ public struct GeneratedAppAdapter {
             ), to: userJSURL)
         }
 
+        var messages = ["\(displayName) profile CSS written and enabled."]
+        messages.append(restartMessageForCurrentTarget())
         return AdapterApplySummary(
             target: target,
             changedPaths: changed.map(\.path),
-            messages: ["\(displayName) profile CSS written. Restart \(displayName) to load userChrome/userContent changes."]
+            messages: messages
         )
+    }
+
+    /// Auto-restart map for targets whose theme is only read at launch. Returns a
+    /// status line (restarted / not running / skipped / manual) for the current
+    /// target, or nil for targets that reload live.
+    private func restartMessageForCurrentTarget() -> String {
+        let restarter = AppRestarter(commandExecutor: commandExecutor)
+        switch target {
+        case .firefox:
+            return restarter.restart(appName: "Firefox", processName: "firefox")
+        case .librewolf:
+            return restarter.restart(appName: "LibreWolf", processName: "librewolf")
+        case .zen:
+            return restarter.restart(appName: "Zen", processName: "zen")
+        case .floorp:
+            return restarter.restart(appName: "Floorp", processName: "floorp")
+        case .thunderbird:
+            return restarter.restart(appName: "Thunderbird", processName: "thunderbird")
+        default:
+            return "Restart \(displayName) to load the new theme."
+        }
     }
 
     private func browserProfiles() -> [BrowserProfile] {
@@ -378,42 +469,133 @@ public struct GeneratedAppAdapter {
         try fileSystem.atomicWriteString(content, to: url)
     }
 
-    private func upsertManagedBlock(in url: URL, body: String, commentPrefix: String, commentSuffix: String) -> String {
+    /// Insert (or refresh) a delimited macwal block in `url`. When `prepend` is
+    /// true the block is written *before* any existing content — required for CSS
+    /// `@import` rules, which browsers ignore unless they precede every other
+    /// rule.
+    private func upsertManagedBlock(in url: URL, body: String, commentPrefix: String, commentSuffix: String, prepend: Bool = false) -> String {
         let existing = (try? String(contentsOf: url, encoding: .utf8)) ?? ""
         let begin = "\(commentPrefix) BEGIN macwal\(commentSuffix)"
         let end = "\(commentPrefix) END macwal\(commentSuffix)"
         let block = "\(begin)\n\(body)\n\(end)"
         let stripped = removeManagedBlock(from: existing, begin: begin, end: end)
             .trimmingCharacters(in: .whitespacesAndNewlines)
-        return stripped.isEmpty ? block + "\n" : stripped + "\n\n" + block + "\n"
+        if stripped.isEmpty {
+            return block + "\n"
+        }
+        return prepend ? block + "\n\n" + stripped + "\n" : stripped + "\n\n" + block + "\n"
     }
 
+    /// Remove every macwal-delimited block, not just the first. Re-applying used
+    /// to leave earlier blocks behind whenever more than one had accumulated.
     private func removeManagedBlock(from content: String, begin: String, end: String) -> String {
-        guard let beginRange = content.range(of: begin),
-              let endRange = content.range(of: end, range: beginRange.upperBound..<content.endIndex) else {
-            return content
-        }
         var result = content
-        result.removeSubrange(beginRange.lowerBound..<endRange.upperBound)
+        while let beginRange = result.range(of: begin),
+              let endRange = result.range(of: end, range: beginRange.upperBound..<result.endIndex) {
+            result.removeSubrange(beginRange.lowerBound..<endRange.upperBound)
+        }
+        return result
+    }
+
+    /// Set a top-level `"key": "value"` string entry in a JSON-with-comments
+    /// file (VS Code / Zed settings), preserving the user's comments and
+    /// formatting. `JSONSerialization` cannot parse JSONC, so a strict parse used
+    /// to silently drop the update and the theme was written but never selected.
+    /// Returns the new file contents, or nil if the existing file is unreadable.
+    private func upsertJSONCStringValue(in url: URL, key: String, value: String) -> String? {
+        let entry = "\"\(key)\": \"\(value)\""
+        guard fileSystem.fileExists(url) else {
+            return "{\n  \(entry)\n}\n"
+        }
+        guard let existing = try? String(contentsOf: url, encoding: .utf8) else {
+            return nil
+        }
+        let trimmed = existing.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty || trimmed == "{}" {
+            return "{\n  \(entry)\n}\n"
+        }
+
+        // Replace an existing value in place (string value, or a small object
+        // value such as Zed's {mode,light,dark}).
+        let escapedKey = NSRegularExpression.escapedPattern(for: key)
+        let pattern = "\"\(escapedKey)\"\\s*:\\s*(?:\"[^\"]*\"|\\{[^{}]*\\})"
+        if let regex = try? NSRegularExpression(pattern: pattern) {
+            let range = NSRange(existing.startIndex..<existing.endIndex, in: existing)
+            if regex.firstMatch(in: existing, range: range) != nil {
+                let template = NSRegularExpression.escapedTemplate(for: entry)
+                return regex.stringByReplacingMatches(in: existing, range: range, withTemplate: template)
+            }
+        }
+
+        // No existing key: insert right after the first `{`. A trailing comma is
+        // tolerated by the JSONC parsers VS Code and Zed use.
+        guard let braceIndex = existing.firstIndex(of: "{") else {
+            return nil
+        }
+        let insertOffset = existing.distance(from: existing.startIndex, to: existing.index(after: braceIndex))
+        var result = existing
+        let insertIndex = result.index(result.startIndex, offsetBy: insertOffset)
+        result.insert(contentsOf: "\n  \(entry),", at: insertIndex)
         return result
     }
 
     private func applyAlacritty(palette: PaletteDocument, dryRun: Bool) throws -> AdapterApplySummary {
         var files = [GeneratedFile(url: alacrittyThemeURL, content: try renderAlacritty(palette))]
         files.append(GeneratedFile(url: alacrittyConfigURL, content: alacrittyConfigWithImport()))
-        return try writeGeneratedFiles(files: files, dryRun: dryRun, messages: ["Alacritty theme written and imported from alacritty.toml. Restart Alacritty or reload config to apply."])
+        // Alacritty reloads its config on save (live_config_reload defaults on),
+        // so no restart is required.
+        return try writeGeneratedFiles(files: files, dryRun: dryRun, messages: ["Alacritty theme written and imported from alacritty.toml (reloads live)."])
     }
 
     private func alacrittyConfigWithImport() -> String {
-        let importLine = "import = [\"~/.config/alacritty/macwal.toml\"]"
+        let importPath = "~/.config/alacritty/macwal.toml"
         let existing = (try? String(contentsOf: alacrittyConfigURL, encoding: .utf8)) ?? ""
         if existing.contains("macwal.toml") {
             return existing
         }
+        // If the user already declares an `import = [ ... ]` array, splice our
+        // path into it. A second top-level `import` key is a TOML duplicate-key
+        // error that breaks the whole config.
+        if let merged = insertIntoTOMLArray(existing, key: "import", element: "\"\(importPath)\"") {
+            return merged
+        }
+        let importLine = "import = [\"\(importPath)\"]"
         if existing.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return importLine + "\n"
         }
         return importLine + "\n\n" + existing
+    }
+
+    /// Splice `element` into the first top-level `key = [ ... ]` TOML array in
+    /// `content`, returning nil when no such array assignment exists. Handles
+    /// arrays that span multiple lines and tolerates the resulting trailing
+    /// comma (valid TOML).
+    private func insertIntoTOMLArray(_ content: String, key: String, element: String) -> String? {
+        // Find a line that assigns the top-level `key`.
+        var lineStart = content.startIndex
+        var assignmentStart: String.Index?
+        while lineStart < content.endIndex {
+            let lineEnd = content[lineStart...].firstIndex(of: "\n") ?? content.endIndex
+            let trimmed = content[lineStart..<lineEnd].trimmingCharacters(in: .whitespaces)
+            if trimmed.hasPrefix(key) {
+                let rest = trimmed.dropFirst(key.count).trimmingCharacters(in: .whitespaces)
+                if rest.hasPrefix("=") {
+                    assignmentStart = lineStart
+                    break
+                }
+            }
+            if lineEnd == content.endIndex { break }
+            lineStart = content.index(after: lineEnd)
+        }
+        guard let assignStart = assignmentStart,
+              let openBracket = content[assignStart...].firstIndex(of: "[") else {
+            return nil
+        }
+        let insertOffset = content.distance(from: content.startIndex, to: content.index(after: openBracket))
+        var result = content
+        let insertIndex = result.index(result.startIndex, offsetBy: insertOffset)
+        result.insert(contentsOf: "\(element), ", at: insertIndex)
+        return result
     }
 
     private func applyKitty(palette: PaletteDocument, dryRun: Bool) throws -> AdapterApplySummary {
@@ -423,10 +605,20 @@ public struct GeneratedAppAdapter {
             GeneratedFile(url: kittyConfigURL, content: include)
         ]
         var summary = try writeGeneratedFiles(files: files, dryRun: dryRun, messages: ["Kitty theme written and included from kitty.conf."])
-        if !dryRun, commandExecutor.executablePath("kitty") != nil {
-            let result = try? commandExecutor.run(executable: "kitty", arguments: ["@", "set-colors", "--all", "--configured", kittyThemeURL.path])
-            if result?.exitCode == 0 {
-                summary = AdapterApplySummary(target: target, changedPaths: summary.changedPaths, messages: summary.messages + ["Ran kitty @ set-colors."])
+        if !dryRun {
+            var applied = false
+            if commandExecutor.executablePath("kitty") != nil {
+                let result = try? commandExecutor.run(executable: "kitty", arguments: ["@", "set-colors", "--all", "--configured", kittyThemeURL.path])
+                if result?.exitCode == 0 {
+                    summary = AdapterApplySummary(target: target, changedPaths: summary.changedPaths, messages: summary.messages + ["Ran kitty @ set-colors."])
+                    applied = true
+                }
+            }
+            // Remote control may be disabled; SIGUSR1 makes kitty re-read its
+            // config (which now includes macwal.conf) with no remote control.
+            if !applied {
+                let reload = AppRestarter(commandExecutor: commandExecutor).signal("USR1", processName: "kitty", appName: "kitty")
+                summary = AdapterApplySummary(target: target, changedPaths: summary.changedPaths, messages: summary.messages + [reload])
             }
         }
         return summary
@@ -442,7 +634,7 @@ public struct GeneratedAppAdapter {
 
     private func applyGhostty(palette: PaletteDocument, dryRun: Bool) throws -> AdapterApplySummary {
         let config = upsertManagedBlock(in: ghosttyConfigURL, body: "theme = macwal", commentPrefix: "#", commentSuffix: "")
-        return try writeGeneratedFiles(
+        var summary = try writeGeneratedFiles(
             files: [
                 GeneratedFile(url: ghosttyThemeURL, content: try renderGhostty(palette)),
                 GeneratedFile(url: ghosttyConfigURL, content: config)
@@ -450,18 +642,53 @@ public struct GeneratedAppAdapter {
             dryRun: dryRun,
             messages: ["Ghostty theme written and selected from config."]
         )
+        if !dryRun {
+            // Ghostty only reads the theme at launch; restart it (unless it is
+            // hosting this command — TERM_PROGRAM=ghostty).
+            let restart = AppRestarter(commandExecutor: commandExecutor).restart(
+                appName: "Ghostty",
+                processName: "ghostty",
+                selfTermProgram: "ghostty"
+            )
+            summary = AdapterApplySummary(target: target, changedPaths: summary.changedPaths, messages: summary.messages + [restart])
+        }
+        return summary
     }
 
     private func applyITerm2(palette: PaletteDocument, dryRun: Bool) throws -> AdapterApplySummary {
-        return try writeGeneratedFiles(files: [GeneratedFile(url: itermDynamicProfileURL, content: try renderITerm2(palette))], dryRun: dryRun, messages: ["iTerm2 Dynamic Profile written. iTerm2 loads DynamicProfiles automatically; select the macwal profile for new sessions."])
+        var summary = try writeGeneratedFiles(files: [GeneratedFile(url: itermDynamicProfileURL, content: try renderITerm2(palette))], dryRun: dryRun, messages: ["iTerm2 Dynamic Profile written (loaded automatically)."])
+        if !dryRun {
+            // Make macwal the default profile so new windows use it. iTerm2 reads
+            // this preference at launch, so already-open windows keep their profile.
+            let defaults = DefaultsClient(paths: paths, executor: commandExecutor, fileSystem: fileSystem)
+            let domain = "com.googlecode.iterm2"
+            let key = "Default Bookmark Guid"
+            try? backupManager.backupDefaultsBeforeWrite(domain: domain, key: key, value: try? defaults.readValue(domain: domain, key: key), adapter: target, dryRun: false)
+            if (try? defaults.setValue("macwal", domain: domain, key: key)) != nil {
+                summary = AdapterApplySummary(target: target, changedPaths: summary.changedPaths + ["\(domain):\(key)"], messages: summary.messages + ["Set macwal as the default iTerm2 profile; open a new window (or restart iTerm2) to use it."])
+            } else {
+                summary = AdapterApplySummary(target: target, changedPaths: summary.changedPaths, messages: summary.messages + ["Select the macwal profile in iTerm2 for new sessions."])
+            }
+        }
+        return summary
     }
 
     private func applyVSCode(palette: PaletteDocument, dryRun: Bool) throws -> AdapterApplySummary {
         var files = vscodeFiles(palette)
-        if let settings = try? vscodeSettingsWithTheme() {
+        if let settings = upsertJSONCStringValue(in: vscodeSettingsURL, key: "workbench.colorTheme", value: "macwal") {
             files.append(GeneratedFile(url: vscodeSettingsURL, content: settings))
         }
-        return try writeGeneratedFiles(files: files, dryRun: dryRun, messages: ["VS Code theme extension written. settings.json was updated when it was valid JSON or absent."])
+        // VS Code hot-applies workbench.colorTheme on save; no restart needed.
+        return try writeGeneratedFiles(files: files, dryRun: dryRun, messages: ["VS Code theme extension written and selected via settings.json (workbench.colorTheme)."])
+    }
+
+    private func applyZed(palette: PaletteDocument, dryRun: Bool) throws -> AdapterApplySummary {
+        var files = zedFiles(palette)
+        if let settings = upsertJSONCStringValue(in: zedSettingsURL, key: "theme", value: "macwal") {
+            files.append(GeneratedFile(url: zedSettingsURL, content: settings))
+        }
+        // Zed watches settings.json and hot-reloads the theme; no restart needed.
+        return try writeGeneratedFiles(files: files, dryRun: dryRun, messages: ["Zed theme written and selected via settings.json (reloads live)."])
     }
 
     private func applyVim(palette: PaletteDocument, dryRun: Bool) throws -> AdapterApplySummary {
@@ -498,6 +725,75 @@ public struct GeneratedAppAdapter {
         return summary
     }
 
+    private func applyStarship(palette: PaletteDocument, dryRun: Bool) throws -> AdapterApplySummary {
+        // Starship re-reads its config for every prompt, so this activates live
+        // in new prompts once written.
+        let content = try starshipConfigWith(palette)
+        return try writeGeneratedFiles(
+            files: [GeneratedFile(url: starshipConfigURL, content: content)],
+            dryRun: dryRun,
+            messages: ["Starship palette written to starship.toml and activated (palette = \"macwal\")."]
+        )
+    }
+
+    private func starshipConfigWith(_ palette: PaletteDocument) throws -> String {
+        var existing = (try? String(contentsOf: starshipConfigURL, encoding: .utf8)) ?? ""
+        // The top-level `palette` selector must precede any table header, so
+        // upsert it above the first `[section]`.
+        existing = upsertTopLevelTOMLKey(existing, key: "palette", value: "\"macwal\"")
+
+        let begin = "# BEGIN macwal"
+        let end = "# END macwal"
+        let table = """
+        \(begin)
+        [palettes.macwal]
+        black = "\(try color(palette, "black"))"
+        red = "\(try color(palette, "red"))"
+        green = "\(try color(palette, "green"))"
+        yellow = "\(try color(palette, "yellow"))"
+        blue = "\(try color(palette, "blue"))"
+        purple = "\(try color(palette, "magenta"))"
+        cyan = "\(try color(palette, "cyan"))"
+        white = "\(try color(palette, "white"))"
+        \(end)
+        """
+        let stripped = removeManagedBlock(from: existing, begin: begin, end: end)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return stripped.isEmpty ? table + "\n" : stripped + "\n\n" + table + "\n"
+    }
+
+    /// Set a bare top-level `key = value` in `content`, replacing an existing
+    /// top-level assignment or inserting one before the first table header (bare
+    /// keys after a `[table]` header belong to that table, not the document root).
+    private func upsertTopLevelTOMLKey(_ content: String, key: String, value: String) -> String {
+        var out: [String] = []
+        var replaced = false
+        var sawTable = false
+        for line in content.components(separatedBy: "\n") {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            if !sawTable && trimmed.hasPrefix("[") {
+                sawTable = true
+            }
+            if !sawTable && !replaced && (trimmed.hasPrefix("\(key) ") || trimmed.hasPrefix("\(key)=")) {
+                out.append("\(key) = \(value)")
+                replaced = true
+            } else {
+                out.append(line)
+            }
+        }
+        if replaced {
+            return out.joined(separator: "\n")
+        }
+        if let tableIndex = out.firstIndex(where: { $0.trimmingCharacters(in: .whitespaces).hasPrefix("[") }) {
+            out.insert("\(key) = \(value)", at: tableIndex)
+        } else {
+            out.insert("\(key) = \(value)", at: 0)
+        }
+        return out.joined(separator: "\n")
+    }
+
+    private var starshipConfigURL: URL { paths.home.appendingPathComponent(".config/starship.toml") }
+
     private func applyBat(palette: PaletteDocument, dryRun: Bool) throws -> AdapterApplySummary {
         let config = upsertManagedBlock(in: batConfigURL, body: "--theme=macwal", commentPrefix: "#", commentSuffix: "")
         var summary = try writeGeneratedFiles(files: [
@@ -531,6 +827,37 @@ public struct GeneratedAppAdapter {
         return try writeGeneratedFiles(files: files, dryRun: dryRun, messages: ["fzf color exports written and sourced from shell rc files. Open a new shell to load them."])
     }
 
+    private func applyYazi(palette: PaletteDocument, dryRun: Bool) throws -> AdapterApplySummary {
+        // Write the theme as a self-contained flavor and reference it from
+        // theme.toml, rather than overwriting the user's whole theme.toml.
+        var files = [GeneratedFile(url: yaziFlavorURL, content: try renderYaziFlavor(palette))]
+        var messages = ["Yazi flavor written to flavors/macwal.flavor/."]
+
+        let existingTheme = (try? String(contentsOf: yaziThemeURL, encoding: .utf8)) ?? ""
+        let strippedTheme = existingTheme.trimmingCharacters(in: .whitespacesAndNewlines)
+        // TOML forbids duplicate `[flavor]` tables. If the user already has their
+        // own, leave theme.toml untouched and tell them how to point it at us.
+        if strippedTheme.contains("[flavor]") && !strippedTheme.contains("# BEGIN macwal") {
+            messages.append("theme.toml already has a [flavor] table; set dark = \"macwal\" / light = \"macwal\" there to activate it.")
+        } else {
+            files.append(GeneratedFile(url: yaziThemeURL, content: yaziThemeReferencingFlavor(existing: existingTheme)))
+            messages.append("Selected the macwal flavor in theme.toml. Restart yazi to load it.")
+        }
+
+        return try writeGeneratedFiles(files: files, dryRun: dryRun, messages: messages)
+    }
+
+    private func yaziThemeReferencingFlavor(existing: String) -> String {
+        let begin = "# BEGIN macwal"
+        let end = "# END macwal"
+        let block = "\(begin)\n[flavor]\ndark = \"macwal\"\nlight = \"macwal\"\n\(end)"
+        let stripped = removeManagedBlock(from: existing, begin: begin, end: end)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        // The [flavor] table must own the end of the file so it does not swallow
+        // the user's other tables; append it last.
+        return stripped.isEmpty ? block + "\n" : stripped + "\n\n" + block + "\n"
+    }
+
     private func applyLazygit(palette: PaletteDocument, dryRun: Bool) throws -> AdapterApplySummary {
         if fileSystem.fileExists(lazygitConfigURL) {
             return try writeGeneratedFiles(files: [GeneratedFile(url: paths.generated.appendingPathComponent("lazygit/config.yml"), content: try renderLazygit(palette))], dryRun: dryRun, messages: ["Existing Lazygit config was not overwritten. Generated config under macwal app support for manual merge."])
@@ -547,22 +874,32 @@ public struct GeneratedAppAdapter {
         guard !dryRun else {
             return summary
         }
+        // A failing live command must not abort the whole run (which, under
+        // `set`, would skip every remaining app). Collect a warning and keep going.
+        var ran = 0
         for commandArguments in arguments {
-            let result = try commandExecutor.run(executable: executable, arguments: commandArguments)
-            guard result.exitCode == 0 else {
-                throw MacwalError.adapterFailed("\(executable) \(commandArguments.joined(separator: " ")) failed: \(result.stderrText)")
+            let result = try? commandExecutor.run(executable: executable, arguments: commandArguments)
+            if let result, result.exitCode == 0 {
+                ran += 1
+            } else {
+                let detail = result.map { $0.stderrText.trimmingCharacters(in: .whitespacesAndNewlines) } ?? "could not launch"
+                messages.append("\(executable) \(commandArguments.joined(separator: " ")) did not succeed\(detail.isEmpty ? "" : ": \(detail)"); generated files are available.")
             }
         }
-        messages.append("Ran \(arguments.count) \(executable) command(s).")
+        messages.append("Ran \(ran) of \(arguments.count) \(executable) command(s).")
         return AdapterApplySummary(target: target, changedPaths: summary.changedPaths, messages: messages)
     }
 
     private func applyHammerspoon(palette: PaletteDocument, dryRun: Bool) throws -> AdapterApplySummary {
-        let initBody = "dofile(os.getenv(\"HOME\") .. \"/.hammerspoon/macwal.lua\")"
+        // Hammerspoon has no global theme concept — colors only matter where your
+        // own Lua uses them. Expose the palette as `hs.macwalColors` (instead of
+        // dofile'ing and discarding it) so config can reference it, and be honest
+        // that nothing changes visually until it does.
+        let initBody = "hs.macwalColors = dofile(os.getenv(\"HOME\") .. \"/.hammerspoon/macwal.lua\")"
         var summary = try writeGeneratedFiles(files: [
             GeneratedFile(url: hammerspoonThemeURL, content: try renderHammerspoon(palette)),
             GeneratedFile(url: hammerspoonInitURL, content: upsertManagedBlock(in: hammerspoonInitURL, body: initBody, commentPrefix: "--", commentSuffix: ""))
-        ], dryRun: dryRun, messages: ["Hammerspoon colors written and loaded from init.lua."])
+        ], dryRun: dryRun, messages: ["Hammerspoon palette written and exposed as hs.macwalColors. Reference it in your config to apply colors — Hammerspoon has no global theme API."])
         if !dryRun, commandExecutor.executablePath("hs") != nil {
             let result = try? commandExecutor.run(executable: "hs", arguments: ["-c", "hs.reload()"])
             if result?.exitCode == 0 {
@@ -572,10 +909,106 @@ public struct GeneratedAppAdapter {
         return summary
     }
 
-    private func applyDiscord(palette: PaletteDocument, dryRun: Bool) throws -> AdapterApplySummary {
-        let files = discordFiles(palette)
-        return try writeGeneratedFiles(files: files, dryRun: dryRun, messages: ["Discord CSS theme files written for Vencord/BetterDiscord when those theme folders exist. Enable the theme in your client if it is not already enabled."])
+    private func applyRaycast(palette: PaletteDocument, dryRun: Bool) throws -> AdapterApplySummary {
+        let themeURL = paths.generated.appendingPathComponent("raycast/macwal.raycasttheme")
+        var files = genericManualFiles(palette)
+        files.append(GeneratedFile(url: themeURL, content: try renderRaycastTheme(palette)))
+        let summary = try writeGeneratedFiles(files: files, dryRun: dryRun, messages: ["Raycast theme written to \(themeURL.lastPathComponent)."])
+        guard !dryRun else {
+            return summary
+        }
+
+        // Best effort: opening a .raycasttheme file hands it to Raycast's import
+        // flow. Gated on MACWAL_SKIP_RESTART so tests/smoke never poke a real
+        // Raycast, and only attempted when Raycast is actually running.
+        let restarter = AppRestarter(commandExecutor: commandExecutor)
+        let skip = commandExecutor.environment["MACWAL_SKIP_RESTART"] != nil
+        if !skip, restarter.isRunning(processName: "Raycast") {
+            let opened = try? commandExecutor.run(executable: "/usr/bin/open", arguments: [themeURL.path])
+            let message = opened?.exitCode == 0
+                ? "Opened the theme in Raycast — confirm the import, then choose it under Raycast Settings → Appearance."
+                : "Import \(themeURL.lastPathComponent) via Raycast Settings → Appearance → Add theme."
+            return AdapterApplySummary(target: target, changedPaths: summary.changedPaths, messages: summary.messages + [message])
+        }
+        return AdapterApplySummary(
+            target: target,
+            changedPaths: summary.changedPaths,
+            messages: summary.messages + ["Import \(themeURL.lastPathComponent) via Raycast Settings → Appearance → Add theme."]
+        )
     }
+
+    func renderRaycastTheme(_ palette: PaletteDocument) throws -> String {
+        let theme: [String: Any] = [
+            "author": "macwal",
+            "name": "macwal",
+            "version": "1",
+            "appearance": palette.appearance.recommendedMode == "light" ? "light" : "dark",
+            "colors": [
+                "background": try color(palette, "background"),
+                "backgroundSecondary": try color(palette, "black"),
+                "text": try color(palette, "foreground"),
+                "selection": try color(palette, "selection"),
+                "loader": try color(palette, "accent"),
+                "red": try color(palette, "red"),
+                "orange": try color(palette, "brightYellow"),
+                "yellow": try color(palette, "yellow"),
+                "green": try color(palette, "green"),
+                "blue": try color(palette, "blue"),
+                "purple": try color(palette, "magenta"),
+                "magenta": try color(palette, "brightMagenta")
+            ]
+        ]
+        let data = try JSONSerialization.data(withJSONObject: theme, options: [.prettyPrinted, .sortedKeys])
+        return String(decoding: data, as: UTF8.self) + "\n"
+    }
+
+    private func applyDiscord(palette: PaletteDocument, dryRun: Bool) throws -> AdapterApplySummary {
+        // Vencord is the dominant Discord client mod and its theme folder is a
+        // plain directory of CSS, so always write + enable it (creating the
+        // folder if needed). This is the "just make it work" path — the file is
+        // harmless if the user has not installed Vencord yet, and active the
+        // moment they do.
+        let css = discordCSS(palette)
+        var files: [GeneratedFile] = [
+            GeneratedFile(url: vencordThemesDirectory.appendingPathComponent("macwal.css"), content: css),
+            GeneratedFile(url: vencordSettingsURL, content: vencordSettingsEnablingTheme())
+        ]
+        var messages = ["Vencord theme written and enabled (enabledThemes). If Discord is running, reload it (Cmd+R) to load it."]
+
+        // Only touch BetterDiscord when the user actually runs it — don't
+        // fabricate a competing client's folder.
+        if fileSystem.isDirectory(betterDiscordThemesDirectory) {
+            files.append(GeneratedFile(url: betterDiscordThemesDirectory.appendingPathComponent("macwal.theme.css"), content: css))
+            messages.append("BetterDiscord theme written; toggle 'macwal' on under BetterDiscord → Themes.")
+        }
+
+        return try writeGeneratedFiles(files: files, dryRun: dryRun, messages: messages)
+    }
+
+    /// Enable macwal.css in Vencord's settings.json (strict JSON) so it activates
+    /// without the user toggling it. Merges into an existing settings file, or
+    /// creates a minimal one when none exists.
+    private func vencordSettingsEnablingTheme() -> String {
+        var object: [String: Any] = [:]
+        if fileSystem.fileExists(vencordSettingsURL),
+           let data = try? Data(contentsOf: vencordSettingsURL),
+           let existing = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] {
+            object = existing
+        }
+        var enabled = (object["enabledThemes"] as? [String]) ?? []
+        if !enabled.contains("macwal.css") {
+            enabled.append("macwal.css")
+        }
+        object["enabledThemes"] = enabled
+        guard let out = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted, .sortedKeys]) else {
+            return "{\n  \"enabledThemes\" : [\n    \"macwal.css\"\n  ]\n}\n"
+        }
+        return String(decoding: out, as: UTF8.self) + "\n"
+    }
+
+    private var vencordThemesDirectory: URL { paths.home.appendingPathComponent(".config/Vencord/themes", isDirectory: true) }
+    private var vencordSettingsURL: URL { paths.home.appendingPathComponent(".config/Vencord/settings/settings.json") }
+    private var betterDiscordThemesDirectory: URL { paths.home.appendingPathComponent("Library/Application Support/BetterDiscord/themes", isDirectory: true) }
 
     private func updateLineConfig(at url: URL, key: String, value: String) -> String {
         let existing = (try? String(contentsOf: url, encoding: .utf8)) ?? ""
@@ -604,6 +1037,7 @@ public struct GeneratedAppAdapter {
     private var itermDynamicProfileURL: URL { paths.home.appendingPathComponent("Library/Application Support/iTerm2/DynamicProfiles/macwal.json") }
     private var vscodeExtensionDirectory: URL { paths.home.appendingPathComponent(".vscode/extensions/macwal-theme") }
     private var vscodeSettingsURL: URL { paths.home.appendingPathComponent("Library/Application Support/Code/User/settings.json") }
+    private var zedSettingsURL: URL { paths.home.appendingPathComponent(".config/zed/settings.json") }
     private var vimThemeURL: URL { paths.home.appendingPathComponent(".vim/colors/macwal.vim") }
     private var vimrcURL: URL { paths.home.appendingPathComponent(".vimrc") }
     private var neovimThemeURL: URL { paths.home.appendingPathComponent(".config/nvim/colors/macwal.vim") }
@@ -620,7 +1054,20 @@ public struct GeneratedAppAdapter {
     private var fzfScriptURL: URL { paths.home.appendingPathComponent(".config/macwal/fzf.sh") }
     private var zshrcURL: URL { paths.home.appendingPathComponent(".zshrc") }
     private var bashrcURL: URL { paths.home.appendingPathComponent(".bashrc") }
-    private var lazygitConfigURL: URL { paths.home.appendingPathComponent("Library/Application Support/lazygit/config.yml") }
+    private var lazygitConfigURL: URL {
+        // lazygit reads $XDG_CONFIG_HOME/lazygit/config.yml when XDG_CONFIG_HOME
+        // is set, and otherwise ~/Library/Application Support/lazygit on macOS.
+        // Many users set XDG_CONFIG_HOME or keep a ~/.config/lazygit, so honor
+        // both before falling back to the macOS default.
+        if let xdg = commandExecutor.environment["XDG_CONFIG_HOME"], !xdg.isEmpty {
+            return MacwalPaths.resolve(xdg, home: paths.home).appendingPathComponent("lazygit/config.yml")
+        }
+        let xdgDefault = paths.home.appendingPathComponent(".config/lazygit/config.yml")
+        if fileSystem.fileExists(xdgDefault) {
+            return xdgDefault
+        }
+        return paths.home.appendingPathComponent("Library/Application Support/lazygit/config.yml")
+    }
     private var hammerspoonThemeURL: URL { paths.home.appendingPathComponent(".hammerspoon/macwal.lua") }
     private var hammerspoonInitURL: URL { paths.home.appendingPathComponent(".hammerspoon/init.lua") }
 }
@@ -635,10 +1082,6 @@ private extension GeneratedAppAdapter {
 
     func color(_ palette: PaletteDocument?, _ key: String) -> String {
         palette?.colors[key] ?? "#000000"
-    }
-
-    func noHash(_ palette: PaletteDocument, _ key: String) throws -> String {
-        try color(palette, key).replacingOccurrences(of: "#", with: "")
     }
 
     func noHash(_ palette: PaletteDocument?, _ key: String) -> String {
@@ -893,16 +1336,6 @@ private extension GeneratedAppAdapter {
         return String(decoding: data, as: UTF8.self) + "\n"
     }
 
-    func vscodeSettingsWithTheme() throws -> String {
-        var settings: [String: Any] = [:]
-        if fileSystem.fileExists(vscodeSettingsURL) {
-            let data = try Data(contentsOf: vscodeSettingsURL)
-            settings = (try JSONSerialization.jsonObject(with: data) as? [String: Any]) ?? [:]
-        }
-        settings["workbench.colorTheme"] = "macwal"
-        let data = try JSONSerialization.data(withJSONObject: settings, options: [.prettyPrinted, .sortedKeys])
-        return String(decoding: data, as: UTF8.self) + "\n"
-    }
 
     private func zedFiles(_ palette: PaletteDocument?) -> [GeneratedFile] {
         let content: [String: Any] = [
@@ -962,24 +1395,6 @@ private extension GeneratedAppAdapter {
         """
     }
 
-    private func starshipFiles(_ palette: PaletteDocument?) -> [GeneratedFile] {
-        [GeneratedFile(url: paths.home.appendingPathComponent(".config/starship-macwal.toml"), content: """
-        # Generated by macwal. Merge into starship.toml to activate.
-        palette = "macwal"
-
-        [palettes.macwal]
-        black = "\(color(palette, "black"))"
-        red = "\(color(palette, "red"))"
-        green = "\(color(palette, "green"))"
-        yellow = "\(color(palette, "yellow"))"
-        blue = "\(color(palette, "blue"))"
-        purple = "\(color(palette, "magenta"))"
-        cyan = "\(color(palette, "cyan"))"
-        white = "\(color(palette, "white"))"
-
-        """)]
-    }
-
     func renderBatTheme(_ palette: PaletteDocument) throws -> String {
         """
         <?xml version="1.0" encoding="UTF-8"?>
@@ -1025,21 +1440,33 @@ private extension GeneratedAppAdapter {
         """
     }
 
-    private func yaziFiles(_ palette: PaletteDocument?) -> [GeneratedFile] {
-        [GeneratedFile(url: paths.home.appendingPathComponent(".config/yazi/theme.toml"), content: """
+    // Yazi renamed the `[manager]` table to `[mgr]`; the old key is ignored by
+    // current releases. This renders a flavor's flavor.toml with the modern
+    // schema.
+    private func renderYaziFlavor(_ palette: PaletteDocument) throws -> String {
+        """
         # Generated by macwal. Do not edit by hand.
-        [manager]
-        cwd = { fg = "\(color(palette, "accent"))" }
-        hovered = { fg = "\(color(palette, "foreground"))", bg = "\(color(palette, "selection"))" }
-        preview_hovered = { fg = "\(color(palette, "foreground"))", bg = "\(color(palette, "brightBlack"))" }
+        [mgr]
+        cwd = { fg = "\(try color(palette, "accent"))" }
+        hovered = { fg = "\(try color(palette, "foreground"))", bg = "\(try color(palette, "selection"))" }
+        preview_hovered = { fg = "\(try color(palette, "foreground"))", bg = "\(try color(palette, "brightBlack"))" }
+        find_keyword = { fg = "\(try color(palette, "yellow"))", bold = true }
+        marker_copied = { fg = "\(try color(palette, "green"))", bg = "\(try color(palette, "green"))" }
+        marker_cut = { fg = "\(try color(palette, "red"))", bg = "\(try color(palette, "red"))" }
+        marker_selected = { fg = "\(try color(palette, "accent"))", bg = "\(try color(palette, "accent"))" }
 
         [status]
         separator_open = ""
         separator_close = ""
-        mode_normal = { fg = "\(color(palette, "background"))", bg = "\(color(palette, "accent"))", bold = true }
+        mode_normal = { fg = "\(try color(palette, "background"))", bg = "\(try color(palette, "accent"))", bold = true }
+        mode_select = { fg = "\(try color(palette, "background"))", bg = "\(try color(palette, "green"))", bold = true }
+        mode_unset = { fg = "\(try color(palette, "background"))", bg = "\(try color(palette, "magenta"))", bold = true }
 
-        """)]
+        """
     }
+
+    private var yaziFlavorURL: URL { paths.home.appendingPathComponent(".config/yazi/flavors/macwal.flavor/flavor.toml") }
+    private var yaziThemeURL: URL { paths.home.appendingPathComponent(".config/yazi/theme.toml") }
 
     func renderFzf(_ palette: PaletteDocument) throws -> String {
         """
@@ -1099,15 +1526,17 @@ private extension GeneratedAppAdapter {
         [GeneratedFile(url: paths.generated.appendingPathComponent("sketchybar/macwal.sh"), content: """
         #!/bin/sh
         sketchybar --bar color=0xff\(noHash(palette, "background"))
-        sketchybar --set / label.color=0xff\(noHash(palette, "foreground")) icon.color=0xff\(noHash(palette, "foreground"))
+        sketchybar --default label.color=0xff\(noHash(palette, "foreground")) icon.color=0xff\(noHash(palette, "foreground"))
 
         """)]
     }
 
     func sketchybarCommands(_ palette: PaletteDocument) -> [[String]] {
+        // `--set /` targets a nonexistent item and errors; `--default` applies to
+        // the bar's items without needing to know their names.
         [
             ["--bar", "color=0xff\(noHash(Optional(palette), "background"))"],
-            ["--set", "/", "label.color=0xff\(noHash(Optional(palette), "foreground"))", "icon.color=0xff\(noHash(Optional(palette), "foreground"))"]
+            ["--default", "label.color=0xff\(noHash(Optional(palette), "foreground"))", "icon.color=0xff\(noHash(Optional(palette), "foreground"))"]
         ]
     }
 
@@ -1151,8 +1580,8 @@ private extension GeneratedAppAdapter {
         return lines.joined(separator: "\n") + "\n"
     }
 
-    private func discordFiles(_ palette: PaletteDocument?) -> [GeneratedFile] {
-        let css = """
+    func discordCSS(_ palette: PaletteDocument?) -> String {
+        """
         /**
          * @name macwal
          * @description Generated by macwal.
@@ -1168,6 +1597,12 @@ private extension GeneratedAppAdapter {
         }
 
         """
+    }
+
+    // Candidate destinations for preview/plannedWrites; apply() only writes to
+    // the ones whose client is actually installed.
+    private func discordFiles(_ palette: PaletteDocument?) -> [GeneratedFile] {
+        let css = discordCSS(palette)
         return [
             GeneratedFile(url: paths.home.appendingPathComponent(".config/Vencord/themes/macwal.css"), content: css),
             GeneratedFile(url: paths.home.appendingPathComponent("Library/Application Support/BetterDiscord/themes/macwal.theme.css"), content: css)

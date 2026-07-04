@@ -1,0 +1,22 @@
+# Swift Package Manager build output
+.build/
+.swiftpm/
+Package.pins
+
+# Xcode
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+DerivedData/
+
+# macOS
+.DS_Store
+
+# Editors
+*.swp
+*~
+.idea/
+.vscode/
+
+# macwal local artifacts
+*.raycasttheme

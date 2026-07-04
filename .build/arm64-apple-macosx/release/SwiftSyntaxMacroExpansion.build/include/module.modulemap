@@ -1,3 +1,0 @@
-module SwiftSyntaxMacroExpansion {
-    header "/Users/damadimo/projects/macwal/.build/arm64-apple-macosx/release/SwiftSyntaxMacroExpansion.build/include/SwiftSyntaxMacroExpansion-Swift.h"
-}

@@ -30,8 +30,7 @@ public struct ChromeAdapter {
     public func apply(palette: PaletteDocument, dryRun: Bool) throws -> AdapterApplySummary {
         let manifestURL = outputDirectory.appendingPathComponent("manifest.json")
         let readmeURL = outputDirectory.appendingPathComponent("README.md")
-        let imageDirectory = outputDirectory.appendingPathComponent("images", isDirectory: true)
-        let changedPaths = [manifestURL.path, readmeURL.path, imageDirectory.path]
+        let changedPaths = [manifestURL.path, readmeURL.path]
 
         if dryRun {
             return AdapterApplySummary(
@@ -42,8 +41,7 @@ public struct ChromeAdapter {
         }
 
         try backupManager.backupFileBeforeWrite(outputDirectory, adapter: .chrome, dryRun: false)
-        try backupManager.backupFileBeforeWrite(imageDirectory, adapter: .chrome, dryRun: false)
-        try fileSystem.ensureDirectory(imageDirectory)
+        try fileSystem.ensureDirectory(outputDirectory)
         try backupManager.backupFileBeforeWrite(manifestURL, adapter: .chrome, dryRun: false)
         try backupManager.backupFileBeforeWrite(readmeURL, adapter: .chrome, dryRun: false)
         try fileSystem.atomicWriteString(try renderManifest(palette), to: manifestURL)

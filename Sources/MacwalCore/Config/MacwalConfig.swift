@@ -26,10 +26,6 @@ public struct MacwalConfig: Codable, Equatable, Sendable {
         public var vaults: [String]
     }
 
-    public struct ChromeConfig: Codable, Equatable, Sendable {
-        public var profiles: [String]
-    }
-
     public struct SpotifyConfig: Codable, Equatable, Sendable {
         public var enabled: Bool
         public var spicetifyPath: String
@@ -49,7 +45,6 @@ public struct MacwalConfig: Codable, Equatable, Sendable {
     public struct AdapterConfig: Codable, Equatable, Sendable {
         public var terminal: TerminalConfig
         public var obsidian: ObsidianConfig
-        public var chrome: ChromeConfig
         public var spotify: SpotifyConfig
         public var system: SystemConfig
         public var finder: FinderConfig
@@ -70,7 +65,6 @@ public struct MacwalConfig: Codable, Equatable, Sendable {
             adapters: AdapterConfig(
                 terminal: TerminalConfig(profileName: "macwal", setAsDefault: true),
                 obsidian: ObsidianConfig(vaults: []),
-                chrome: ChromeConfig(profiles: []),
                 spotify: SpotifyConfig(enabled: false, spicetifyPath: "spicetify"),
                 system: SystemConfig(setAppearanceMode: false, setAccentColor: false, setHighlightColor: false),
                 finder: FinderConfig(setFolderTint: false, folders: [])
