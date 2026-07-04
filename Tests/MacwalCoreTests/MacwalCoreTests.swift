@@ -334,6 +334,10 @@ struct MacwalCoreTests {
         // New tab / home / blank page background is themed via a content-sheet block.
         #expect(try String(contentsOf: macwalCSS, encoding: .utf8).contains("--newtab-background-color"))
         #expect(try String(contentsOf: macwalCSS, encoding: .utf8).contains("about:newtab"))
+        // Cleaner new tab: default logo/stories/sponsored clutter is hidden.
+        #expect(try String(contentsOf: macwalCSS, encoding: .utf8).contains(".logo-and-wordmark"))
+        #expect(try String(contentsOf: macwalCSS, encoding: .utf8).contains("display: none"))
+        #expect(try String(contentsOf: macwalCSS, encoding: .utf8).contains("data-section-id=\"topstories\""))
         #expect(try String(contentsOf: userChrome, encoding: .utf8).contains("@import url(\"macwal.css\");"))
         #expect(try String(contentsOf: userContent, encoding: .utf8).contains("@import url(\"macwal.css\");"))
         #expect(try String(contentsOf: userJS, encoding: .utf8).contains("toolkit.legacyUserProfileCustomizations.stylesheets"))

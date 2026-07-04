@@ -1161,21 +1161,76 @@ private extension GeneratedAppAdapter {
          * New tab / home / blank page. These are content documents, so the
          * rules only take effect through userContent.css (macwal.css is imported
          * into both userChrome.css and userContent.css); they are inert in the
-         * chrome sheet.
+         * chrome sheet. Beyond recoloring, this strips the default clutter
+         * (logo/wordmark, sponsored shortcuts, Pocket "recommended" stories,
+         * highlights, weather, snippets) while keeping the search box and the
+         * user's own top-site shortcuts.
          */
         @-moz-document url("about:home"), url("about:newtab"), url("about:blank") {
           :root {
             --newtab-background-color: \(try color(palette, "background")) !important;
             --newtab-background-color-secondary: \(try color(palette, "black")) !important;
             --newtab-text-primary-color: \(try color(palette, "foreground")) !important;
+            --newtab-text-secondary-color: \(try color(palette, "foreground")) !important;
+            --newtab-primary-action-background: \(try color(palette, "accent")) !important;
+            --newtab-element-hover-color: \(try color(palette, "brightBlack")) !important;
+            --newtab-element-active-color: \(try color(palette, "brightBlack")) !important;
+            --newtab-border-color: \(try color(palette, "brightBlack")) !important;
             --in-content-page-background: \(try color(palette, "background")) !important;
             --in-content-page-color: \(try color(palette, "foreground")) !important;
           }
+
           body,
           .outer-wrapper,
           .activity-stream,
           main {
             background-color: \(try color(palette, "background")) !important;
+            color: \(try color(palette, "foreground")) !important;
+          }
+
+          /*
+           * Declutter: hide the logo/wordmark, Pocket/recommended stories,
+           * highlights, weather, snippets, and sponsored shortcuts. The Top
+           * Sites section (data-section-id="topsites") is deliberately left
+           * alone so the user's own shortcuts stay.
+           */
+          .logo-and-wordmark,
+          .ds-layout,
+          section.top-stories,
+          [data-section-id="topstories"],
+          [data-section-id="highlights"],
+          .ds-card-grid,
+          .ds-navigation,
+          .ds-outer-wrapper-breakpoint-override,
+          .weather,
+          #snippets-container,
+          .snippet,
+          .sponsored-content,
+          .top-site-outer:has(.sponsored-label),
+          .top-site-outer[data-sponsored],
+          .top-sites .sponsored-label {
+            display: none !important;
+          }
+
+          /* Recolor the kept surfaces (search box + shortcut tiles). */
+          .search-handoff-button,
+          .fake-editable,
+          input.search-handoff-button,
+          .top-site-button .tile,
+          .top-site-outer .tile {
+            background-color: \(try color(palette, "black")) !important;
+            color: \(try color(palette, "foreground")) !important;
+            border-color: \(try color(palette, "brightBlack")) !important;
+          }
+
+          .top-site-button .tile:hover,
+          .top-site-outer .tile:hover {
+            background-color: \(try color(palette, "brightBlack")) !important;
+          }
+
+          .top-site-button .title,
+          .top-sites-list .title,
+          .top-site-outer .title {
             color: \(try color(palette, "foreground")) !important;
           }
         }

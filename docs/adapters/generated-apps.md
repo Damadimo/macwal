@@ -32,7 +32,7 @@ Behavior:
 - Writes `chrome/macwal.css`.
 - Inserts a managed `@import url("macwal.css");` block in `chrome/userChrome.css`.
 - Inserts a managed `@import url("macwal.css");` block in `chrome/userContent.css`.
-- Themes both the toolbar chrome and, through a content-sheet `@-moz-document` block (`about:newtab`, `about:home`, `about:blank`), the new tab / home / blank page background so it matches the palette.
+- Themes the toolbar chrome and, through a content-sheet `@-moz-document` block (`about:newtab`, `about:home`, `about:blank`), the new tab / home / blank page. Beyond recoloring the background to match the palette, the new tab page is decluttered: the logo/wordmark, sponsored shortcuts, Pocket "recommended" stories, highlights, weather, and snippets are hidden, while the search box and the user's own top-site shortcuts are kept and recolored. The Top Sites section (`data-section-id="topsites"`) is deliberately left intact. The toolbar chrome stays fully functional and is only recolored.
 - Enables custom profile chrome CSS by writing `toolkit.legacyUserProfileCustomizations.stylesheets` in `user.js`.
 - These profiles load chrome CSS only at startup, so `macwal` quits and relaunches the app automatically to make the theme visible (set `MACWAL_SKIP_RESTART=1` to skip the restart).
 

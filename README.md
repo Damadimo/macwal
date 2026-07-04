@@ -46,7 +46,7 @@ swift build
 | `terminal` | supported/private mixed | Generates and installs a translucent `.terminal` profile as the default Terminal profile. |
 | `obsidian` | supported app config | Writes and enables CSS snippets in configured vaults. |
 | `chrome` | manual | Generates a Manifest V3 theme folder for manual loading. |
-| `firefox`, `librewolf`, `zen`, `floorp` | supported app config | Writes profile `userChrome.css`, `userContent.css`, and `user.js` (theming both the toolbar chrome and the new tab / home page background), then auto-quits and relaunches the browser to load it. |
+| `firefox`, `librewolf`, `zen`, `floorp` | supported app config | Writes profile `userChrome.css`, `userContent.css`, and `user.js`: recolors the toolbar chrome and declutters the new tab / home page (hides the logo/wordmark, sponsored shortcuts, Pocket stories, weather, and snippets while keeping the search box and your shortcuts), then auto-quits and relaunches the browser to load it. |
 | `spotify` | external | Generates and applies a Spicetify theme (opt-in via `adapters.spotify.enabled`). |
 | `alacritty`, `kitty`, `wezterm`, `ghostty`, `iterm2` | supported / supported app config | Writes terminal color configuration with a translucent background (`adapters.terminalOpacity`); Kitty live-reloads, Ghostty auto-restarts, iTerm2 sets the profile as default. |
 | `vscode`, `zed`, `vim`, `neovim` | supported / supported app config | Writes editor themes and activates them (VS Code / Zed `settings.json`, `.vimrc`/`init`). |
