@@ -32,6 +32,7 @@ Behavior:
 - Writes `chrome/macwal.css`.
 - Inserts a managed `@import url("macwal.css");` block in `chrome/userChrome.css`.
 - Inserts a managed `@import url("macwal.css");` block in `chrome/userContent.css`.
+- Themes both the toolbar chrome and, through a content-sheet `@-moz-document` block (`about:newtab`, `about:home`, `about:blank`), the new tab / home / blank page background so it matches the palette.
 - Enables custom profile chrome CSS by writing `toolkit.legacyUserProfileCustomizations.stylesheets` in `user.js`.
 - These profiles load chrome CSS only at startup, so `macwal` quits and relaunches the app automatically to make the theme visible (set `MACWAL_SKIP_RESTART=1` to skip the restart).
 
@@ -52,11 +53,13 @@ Targets and writes:
 
 | Target | Writes | Runtime behavior |
 | --- | --- | --- |
-| `alacritty` | `~/.config/alacritty/macwal.toml`, import in `alacritty.toml` | Apply on config reload or app restart. |
-| `kitty` | `~/.config/kitty/macwal.conf`, include in `kitty.conf` | Attempts `kitty @ set-colors --all --configured`. |
-| `wezterm` | `~/.config/wezterm/macwal.lua`; creates `wezterm.lua` only if absent | Existing configs are not overwritten. |
-| `ghostty` | `~/.config/ghostty/themes/macwal`, managed `theme = macwal` in config | Auto-quits and relaunches Ghostty to load the theme (set `MACWAL_SKIP_RESTART=1` to skip). |
-| `iterm2` | `~/Library/Application Support/iTerm2/DynamicProfiles/macwal.json` | iTerm2 loads dynamic profiles automatically; select `macwal` for new sessions. |
+| `alacritty` | `~/.config/alacritty/macwal.toml` (incl. `[window] opacity`), import in `alacritty.toml` | Apply on config reload or app restart. |
+| `kitty` | `~/.config/kitty/macwal.conf` (incl. `background_opacity`), include in `kitty.conf` | Attempts `kitty @ set-colors --all --configured`. |
+| `wezterm` | `~/.config/wezterm/macwal.lua`; creates `wezterm.lua` (incl. `window_background_opacity`) only if absent | Existing configs are not overwritten; when one exists, macwal reports the `window_background_opacity` line to add. |
+| `ghostty` | `~/.config/ghostty/themes/macwal`, managed `theme = macwal` + `background-opacity` in config | Auto-quits and relaunches Ghostty to load the theme (set `MACWAL_SKIP_RESTART=1` to skip). |
+| `iterm2` | `~/Library/Application Support/iTerm2/DynamicProfiles/macwal.json` (incl. `Transparency`) | iTerm2 loads dynamic profiles automatically; select `macwal` for new sessions. |
+
+All terminal targets (including Terminal.app, whose transparency is the alpha channel of its background color) apply a translucent background controlled by `adapters.terminalOpacity` (default `0.85`; `1.0` = fully opaque). WezTerm color schemes cannot carry window opacity, so translucency only lands when macwal generates the WezTerm config.
 
 ## Editor Targets
 

@@ -7,6 +7,10 @@ public struct TerminalAdapter {
     public let fileSystem: FileSystem
     public let backupManager: BackupManager
     public let commandExecutor: CommandExecutor
+    /// Background opacity for the generated Terminal.app profile (0.0…1.0).
+    /// Terminal.app has no opacity key; transparency is the alpha channel of
+    /// the BackgroundColor.
+    public let opacity: Double
 
     private var outputFile: URL {
         paths.generated.appendingPathComponent("terminal/\(safeProfileFileName).terminal")
@@ -17,13 +21,15 @@ public struct TerminalAdapter {
         config: MacwalConfig.TerminalConfig = MacwalConfig.default.adapters.terminal,
         fileSystem: FileSystem = FileSystem(),
         backupManager: BackupManager? = nil,
-        commandExecutor: CommandExecutor = CommandExecutor()
+        commandExecutor: CommandExecutor = CommandExecutor(),
+        opacity: Double = 1.0
     ) {
         self.paths = paths
         self.config = config
         self.fileSystem = fileSystem
         self.commandExecutor = commandExecutor
         self.backupManager = backupManager ?? BackupManager(paths: paths, fileSystem: fileSystem, commandExecutor: commandExecutor)
+        self.opacity = opacity
     }
 
     private var safeProfileFileName: String {
@@ -133,7 +139,10 @@ public struct TerminalAdapter {
             guard let hex = palette.colors[paletteKey] else {
                 throw MacwalError.adapterFailed("Palette is missing required color '\(paletteKey)'.")
             }
-            profile[terminalKey] = try archiveColor(hex)
+            // Terminal.app has no opacity setting; window translucency is the
+            // alpha channel of BackgroundColor. Every other color stays opaque.
+            let alpha: CGFloat = terminalKey == "BackgroundColor" ? CGFloat(min(max(opacity, 0), 1)) : 1.0
+            profile[terminalKey] = try archiveColor(hex, alpha: alpha)
         }
 
         return profile
@@ -163,13 +172,13 @@ public struct TerminalAdapter {
         try defaults.setValue(config.profileName, domain: domain, key: "Startup Window Settings")
     }
 
-    private func archiveColor(_ hex: String) throws -> Data {
+    private func archiveColor(_ hex: String, alpha: CGFloat = 1.0) throws -> Data {
         let rgb = try RGBColor(hex: hex)
         let color = NSColor(
             calibratedRed: CGFloat(rgb.red) / 255.0,
             green: CGFloat(rgb.green) / 255.0,
             blue: CGFloat(rgb.blue) / 255.0,
-            alpha: 1.0
+            alpha: alpha
         )
         return try NSKeyedArchiver.archivedData(withRootObject: color, requiringSecureCoding: true)
     }

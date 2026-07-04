@@ -138,6 +138,52 @@ struct MacwalCoreTests {
         #expect(try terminalProfileSnapshot(at: profile).encodedJSON() == snapshot(named: "terminal-profile-summary.json"))
     }
 
+    @Test func terminalProfileBackgroundIsTranslucent() throws {
+        let temp = try TemporaryWorkspace()
+        let paths = MacwalPaths(environment: temp.environment)
+        let fileSystem = FileSystem(allowedWriteRoots: [paths.appSupport, paths.cache])
+        let palette = snapshotPalette()
+        var terminalConfig = MacwalConfig.default.adapters.terminal
+        terminalConfig.setAsDefault = false
+
+        _ = try TerminalAdapter(paths: paths, config: terminalConfig, fileSystem: fileSystem, opacity: 0.85).apply(palette: palette, dryRun: false)
+
+        let profile = paths.generated.appendingPathComponent("terminal/macwal.terminal")
+        let plist = try #require(try PropertyListSerialization.propertyList(from: Data(contentsOf: profile), format: nil) as? [String: Any])
+        // Terminal.app translucency is the alpha channel of BackgroundColor;
+        // every other color must stay fully opaque.
+        let backgroundData = try #require(plist["BackgroundColor"] as? Data)
+        let textData = try #require(plist["TextColor"] as? Data)
+        let decodedBackground = try NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: backgroundData)
+        let decodedText = try NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: textData)
+        let backgroundAlpha = try #require(decodedBackground).alphaComponent
+        let textAlpha = try #require(decodedText).alphaComponent
+        #expect(abs(backgroundAlpha - 0.85) < 0.01)
+        #expect(abs(textAlpha - 1.0) < 0.01)
+    }
+
+    @Test func configDecodesWithoutTerminalOpacity() throws {
+        // A config.json written before terminalOpacity existed must still load,
+        // defaulting the missing key to 0.85.
+        let json = """
+        {
+          "schemaVersion": 1,
+          "defaultTargets": ["shell"],
+          "allowPrivateByDefault": false,
+          "palette": { "mode": "auto", "minimumForegroundContrast": 7.0, "minimumAccentContrast": 3.0 },
+          "adapters": {
+            "terminal": { "profileName": "macwal", "setAsDefault": true },
+            "obsidian": { "vaults": [] },
+            "spotify": { "enabled": false, "spicetifyPath": "spicetify" },
+            "system": { "setAppearanceMode": false, "setAccentColor": false, "setHighlightColor": false },
+            "finder": { "setFolderTint": false, "folders": [] }
+          }
+        }
+        """
+        let config = try JSONDecoder().decode(MacwalConfig.self, from: Data(json.utf8))
+        #expect(config.adapters.terminalOpacity == 0.85)
+    }
+
     @Test func obsidianAndSpotifyArtifactsMatchSnapshots() throws {
         let temp = try TemporaryWorkspace()
         let vault = temp.root.appendingPathComponent("Vault", isDirectory: true)
@@ -285,6 +331,9 @@ struct MacwalCoreTests {
         let userJS = profile.appendingPathComponent("user.js")
 
         #expect(try String(contentsOf: macwalCSS, encoding: .utf8).contains("--toolbar-bgcolor"))
+        // New tab / home / blank page background is themed via a content-sheet block.
+        #expect(try String(contentsOf: macwalCSS, encoding: .utf8).contains("--newtab-background-color"))
+        #expect(try String(contentsOf: macwalCSS, encoding: .utf8).contains("about:newtab"))
         #expect(try String(contentsOf: userChrome, encoding: .utf8).contains("@import url(\"macwal.css\");"))
         #expect(try String(contentsOf: userContent, encoding: .utf8).contains("@import url(\"macwal.css\");"))
         #expect(try String(contentsOf: userJS, encoding: .utf8).contains("toolkit.legacyUserProfileCustomizations.stylesheets"))
@@ -333,6 +382,12 @@ struct MacwalCoreTests {
         #expect(try String(contentsOf: home.appendingPathComponent(".config/wezterm/macwal.lua"), encoding: .utf8).contains("return {"))
         #expect(try String(contentsOf: home.appendingPathComponent(".config/ghostty/themes/macwal"), encoding: .utf8).contains("palette = 0="))
         #expect(try String(contentsOf: home.appendingPathComponent("Library/Application Support/iTerm2/DynamicProfiles/macwal.json"), encoding: .utf8).contains("\"Profiles\""))
+        // Terminal translucency (default opacity 0.85) is applied to every terminal.
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/alacritty/macwal.toml"), encoding: .utf8).contains("opacity = 0.85"))
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/kitty/macwal.conf"), encoding: .utf8).contains("background_opacity 0.85"))
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/ghostty/config"), encoding: .utf8).contains("background-opacity = 0.85"))
+        #expect(try String(contentsOf: home.appendingPathComponent(".config/wezterm/wezterm.lua"), encoding: .utf8).contains("window_background_opacity = 0.85"))
+        #expect(try String(contentsOf: home.appendingPathComponent("Library/Application Support/iTerm2/DynamicProfiles/macwal.json"), encoding: .utf8).contains("Transparency"))
         #expect(try String(contentsOf: home.appendingPathComponent(".vscode/extensions/macwal-theme/package.json"), encoding: .utf8).contains("\"macwal-theme\""))
         #expect(try String(contentsOf: home.appendingPathComponent("Library/Application Support/Code/User/settings.json"), encoding: .utf8).contains("workbench.colorTheme"))
         #expect(try String(contentsOf: home.appendingPathComponent(".config/zed/themes/macwal.json"), encoding: .utf8).contains("\"themes\""))

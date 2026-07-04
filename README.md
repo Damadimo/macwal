@@ -43,12 +43,12 @@ swift build
 | Target | Classification | Status |
 | --- | --- | --- |
 | `shell` | supported | Generates shell, JSON, CSS, and Xresources files. |
-| `terminal` | supported/private mixed | Generates and installs a `.terminal` profile as the default Terminal profile. |
+| `terminal` | supported/private mixed | Generates and installs a translucent `.terminal` profile as the default Terminal profile. |
 | `obsidian` | supported app config | Writes and enables CSS snippets in configured vaults. |
 | `chrome` | manual | Generates a Manifest V3 theme folder for manual loading. |
-| `firefox`, `librewolf`, `zen`, `floorp` | supported app config | Writes profile `userChrome.css`, `userContent.css`, and `user.js`, then auto-quits and relaunches the browser to load it. |
+| `firefox`, `librewolf`, `zen`, `floorp` | supported app config | Writes profile `userChrome.css`, `userContent.css`, and `user.js` (theming both the toolbar chrome and the new tab / home page background), then auto-quits and relaunches the browser to load it. |
 | `spotify` | external | Generates and applies a Spicetify theme (opt-in via `adapters.spotify.enabled`). |
-| `alacritty`, `kitty`, `wezterm`, `ghostty`, `iterm2` | supported / supported app config | Writes terminal color configuration; Kitty live-reloads, Ghostty auto-restarts, iTerm2 sets the profile as default. |
+| `alacritty`, `kitty`, `wezterm`, `ghostty`, `iterm2` | supported / supported app config | Writes terminal color configuration with a translucent background (`adapters.terminalOpacity`); Kitty live-reloads, Ghostty auto-restarts, iTerm2 sets the profile as default. |
 | `vscode`, `zed`, `vim`, `neovim` | supported / supported app config | Writes editor themes and activates them (VS Code / Zed `settings.json`, `.vimrc`/`init`). |
 | `tmux`, `starship`, `bat`, `btop`, `yazi`, `fzf`, `lazygit` | supported / supported app config | Writes common TUI/CLI theme files and activates them (Starship `palette`, Yazi flavor, bat/btop config) when safe. |
 | `aerospace`, `yabai`, `sketchybar`, `janky-borders`, `hammerspoon` | supported / external | Writes macOS tool color configs; runs available CLI reload/config commands for supported tools. |
@@ -157,6 +157,7 @@ The config file is created at:
 
 Important settings and opt-ins:
 
+- `adapters.terminalOpacity` (default `0.85`) sets the background opacity applied to every generated terminal theme (Alacritty, Kitty, WezTerm, Ghostty, iTerm2, and Terminal.app). Use `1.0` for fully opaque, lower for more translucency. Existing config files without this key keep working and default to `0.85`.
 - Terminal mutates `com.apple.Terminal` preferences when `adapters.terminal.setAsDefault` is true. This is true by default so `apply` visibly updates Terminal without a manual import step.
 - Obsidian writes only to `adapters.obsidian.vaults` and enables the generated `macwal` snippet in each vault's `.obsidian/appearance.json`.
 - Spotify requires `spicetify` on `PATH` or `adapters.spotify.spicetifyPath`.

@@ -48,6 +48,9 @@ public struct MacwalConfig: Codable, Equatable, Sendable {
         public var spotify: SpotifyConfig
         public var system: SystemConfig
         public var finder: FinderConfig
+        /// Background opacity applied to every generated terminal theme.
+        /// 0.0 = fully transparent, 1.0 = fully opaque. Default is a subtle 0.85.
+        public var terminalOpacity: Double = 0.85
     }
 
     public var schemaVersion: Int
@@ -67,8 +70,31 @@ public struct MacwalConfig: Codable, Equatable, Sendable {
                 obsidian: ObsidianConfig(vaults: []),
                 spotify: SpotifyConfig(enabled: false, spicetifyPath: "spicetify"),
                 system: SystemConfig(setAppearanceMode: false, setAccentColor: false, setHighlightColor: false),
-                finder: FinderConfig(setFolderTint: false, folders: [])
+                finder: FinderConfig(setFolderTint: false, folders: []),
+                terminalOpacity: 0.85
             )
+        )
+    }
+}
+
+extension MacwalConfig.AdapterConfig {
+    private enum CodingKeys: String, CodingKey {
+        case terminal, obsidian, spotify, system, finder, terminalOpacity
+    }
+
+    // Custom decoding so that config.json files written by earlier versions
+    // (which have no `terminalOpacity` key) still load, defaulting to 0.85.
+    // Declared in an extension to keep the synthesized memberwise init and the
+    // synthesized Encodable conformance.
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.init(
+            terminal: try container.decode(MacwalConfig.TerminalConfig.self, forKey: .terminal),
+            obsidian: try container.decode(MacwalConfig.ObsidianConfig.self, forKey: .obsidian),
+            spotify: try container.decode(MacwalConfig.SpotifyConfig.self, forKey: .spotify),
+            system: try container.decode(MacwalConfig.SystemConfig.self, forKey: .system),
+            finder: try container.decode(MacwalConfig.FinderConfig.self, forKey: .finder),
+            terminalOpacity: try container.decodeIfPresent(Double.self, forKey: .terminalOpacity) ?? 0.85
         )
     }
 }

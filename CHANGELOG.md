@@ -6,6 +6,8 @@ Initial developer-tool release candidate.
 
 ### Added
 
+- Translucent terminal backgrounds: every generated terminal theme (Alacritty, Kitty, WezTerm, Ghostty, iTerm2, and Terminal.app) is now a bit see-through, controlled by `adapters.terminalOpacity` (default `0.85`; `1.0` restores fully opaque). Config files written by earlier versions load unchanged and pick up the default.
+- Firefox-family new tab / home / blank page background now matches the palette (themed through `userContent.css`), not just the toolbar chrome.
 - `set` command: themes every supported target the user has installed (installed-detection via apps, CLIs on `PATH`, and config directories) and sets the desktop wallpaper on all displays in one step.
 - `--image` now accepts a folder; a random image inside it is chosen (wallpaper rotation). This applies to `set`, `apply`, `preview`, and `palette`.
 - Automatic activation with no manual step: browsers, Thunderbird, Terminal.app, and Ghostty are quit and relaunched; Kitty is live-reloaded; VS Code/Zed/Vim/Neovim/Starship/Yazi/bat/btop themes are activated in their config; iTerm2's generated profile is set as default; the Discord (Vencord) theme is enabled in settings; Raycast is imported when running. `MACWAL_SKIP_RESTART=1` disables all restarts/reloads/live flips.
