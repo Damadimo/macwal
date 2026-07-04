@@ -6,8 +6,9 @@ public struct GeneratedAppAdapter {
     public let fileSystem: FileSystem
     public let backupManager: BackupManager
     public let commandExecutor: CommandExecutor
-    /// Background opacity for generated terminal themes (0.0…1.0).
-    public let terminalOpacity: Double
+    /// Background opacity for generated translucent surfaces (terminals and
+    /// Discord); 0.0…1.0.
+    public let opacity: Double
 
     private struct BrowserProfile {
         let root: URL
@@ -19,21 +20,21 @@ public struct GeneratedAppAdapter {
         fileSystem: FileSystem = FileSystem(),
         backupManager: BackupManager? = nil,
         commandExecutor: CommandExecutor = CommandExecutor(),
-        terminalOpacity: Double = 0.85
+        opacity: Double = 0.85
     ) {
         self.target = target
         self.paths = paths
         self.fileSystem = fileSystem
         self.backupManager = backupManager ?? BackupManager(paths: paths, fileSystem: fileSystem, commandExecutor: commandExecutor)
         self.commandExecutor = commandExecutor
-        self.terminalOpacity = terminalOpacity
+        self.opacity = opacity
     }
 
     /// Opacity clamped to the valid [0, 1] range.
-    var clampedTerminalOpacity: Double { min(max(terminalOpacity, 0), 1) }
+    var clampedOpacity: Double { min(max(opacity, 0), 1) }
 
     /// Clamped opacity formatted for config files, e.g. "0.85" or "1".
-    func opacityString() -> String { String(format: "%g", clampedTerminalOpacity) }
+    func opacityString() -> String { String(format: "%g", clampedOpacity) }
 
     public func preview() -> AdapterPlan {
         if isBrowserProfileTarget {
@@ -185,7 +186,8 @@ public struct GeneratedAppAdapter {
         case .hammerspoon:
             roots.append(home(".hammerspoon"))
         case .discord:
-            roots.append(home(".config/Vencord"))
+            roots.append(home("Library/Application Support/Vencord"))
+            roots.append(home("Library/Application Support/vesktop"))
             roots.append(home("Library/Application Support/BetterDiscord"))
         case .yabai, .sketchybar, .jankyBorders, .raycast, .alfred, .telegram, .slack:
             // These only write generated assets under macwal's app support.
@@ -659,15 +661,16 @@ public struct GeneratedAppAdapter {
             dryRun: dryRun,
             messages: ["Ghostty theme written and selected from config."]
         )
-        if !dryRun {
-            // Ghostty only reads the theme at launch; restart it (unless it is
-            // hosting this command — TERM_PROGRAM=ghostty).
-            let restart = AppRestarter(commandExecutor: commandExecutor).restart(
+        if !dryRun, let sequences = TerminalColorSequence.sequences(for: palette) {
+            // Recolor open Ghostty windows in place with OSC sequences instead of
+            // quitting and relaunching. New windows pick up the theme (and
+            // background-opacity) from config.
+            let reload = TerminalLiveReloader(commandExecutor: commandExecutor).reload(
+                termProgram: "ghostty",
                 appName: "Ghostty",
-                processName: "ghostty",
-                selfTermProgram: "ghostty"
+                sequences: sequences
             )
-            summary = AdapterApplySummary(target: target, changedPaths: summary.changedPaths, messages: summary.messages + [restart])
+            summary = AdapterApplySummary(target: target, changedPaths: summary.changedPaths, messages: summary.messages + [reload])
         }
         return summary
     }
@@ -988,9 +991,17 @@ public struct GeneratedAppAdapter {
         let css = discordCSS(palette)
         var files: [GeneratedFile] = [
             GeneratedFile(url: vencordThemesDirectory.appendingPathComponent("macwal.css"), content: css),
-            GeneratedFile(url: vencordSettingsURL, content: vencordSettingsEnablingTheme())
+            GeneratedFile(url: vencordSettingsURL, content: settingsEnablingTheme(at: vencordSettingsURL))
         ]
         var messages = ["Vencord theme written and enabled (enabledThemes). If Discord is running, reload it (Cmd+R) to load it."]
+
+        // Vesktop is a standalone Discord client that bundles Vencord; only touch
+        // it when the user actually runs it — don't fabricate its folder.
+        if fileSystem.isDirectory(vesktopBaseDirectory) {
+            files.append(GeneratedFile(url: vesktopThemesDirectory.appendingPathComponent("macwal.css"), content: css))
+            files.append(GeneratedFile(url: vesktopSettingsURL, content: settingsEnablingTheme(at: vesktopSettingsURL)))
+            messages.append("Vesktop theme written and enabled; reload Vesktop (Cmd+R) to load it.")
+        }
 
         // Only touch BetterDiscord when the user actually runs it — don't
         // fabricate a competing client's folder.
@@ -1002,13 +1013,13 @@ public struct GeneratedAppAdapter {
         return try writeGeneratedFiles(files: files, dryRun: dryRun, messages: messages)
     }
 
-    /// Enable macwal.css in Vencord's settings.json (strict JSON) so it activates
-    /// without the user toggling it. Merges into an existing settings file, or
-    /// creates a minimal one when none exists.
-    private func vencordSettingsEnablingTheme() -> String {
+    /// Enable macwal.css in a Vencord/Vesktop settings.json (strict JSON) so it
+    /// activates without the user toggling it. Merges into an existing settings
+    /// file, or creates a minimal one when none exists.
+    private func settingsEnablingTheme(at url: URL) -> String {
         var object: [String: Any] = [:]
-        if fileSystem.fileExists(vencordSettingsURL),
-           let data = try? Data(contentsOf: vencordSettingsURL),
+        if fileSystem.fileExists(url),
+           let data = try? Data(contentsOf: url),
            let existing = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] {
             object = existing
         }
@@ -1023,8 +1034,17 @@ public struct GeneratedAppAdapter {
         return String(decoding: out, as: UTF8.self) + "\n"
     }
 
-    private var vencordThemesDirectory: URL { paths.home.appendingPathComponent(".config/Vencord/themes", isDirectory: true) }
-    private var vencordSettingsURL: URL { paths.home.appendingPathComponent(".config/Vencord/settings/settings.json") }
+    // Vencord (injected into the real Discord app) and Vesktop (a standalone
+    // Discord client that bundles Vencord) both live under macOS Application
+    // Support, not the Linux `~/.config` path. They share the same on-disk
+    // layout: a `themes/` folder of CSS plus a `settings/settings.json` whose
+    // `enabledThemes` array turns a theme on.
+    private var vencordBaseDirectory: URL { paths.home.appendingPathComponent("Library/Application Support/Vencord", isDirectory: true) }
+    private var vencordThemesDirectory: URL { vencordBaseDirectory.appendingPathComponent("themes", isDirectory: true) }
+    private var vencordSettingsURL: URL { vencordBaseDirectory.appendingPathComponent("settings/settings.json") }
+    private var vesktopBaseDirectory: URL { paths.home.appendingPathComponent("Library/Application Support/vesktop", isDirectory: true) }
+    private var vesktopThemesDirectory: URL { vesktopBaseDirectory.appendingPathComponent("themes", isDirectory: true) }
+    private var vesktopSettingsURL: URL { vesktopBaseDirectory.appendingPathComponent("settings/settings.json") }
     private var betterDiscordThemesDirectory: URL { paths.home.appendingPathComponent("Library/Application Support/BetterDiscord/themes", isDirectory: true) }
 
     private func updateLineConfig(at url: URL, key: String, value: String) -> String {
@@ -1103,6 +1123,15 @@ private extension GeneratedAppAdapter {
 
     func noHash(_ palette: PaletteDocument?, _ key: String) -> String {
         color(palette, key).replacingOccurrences(of: "#", with: "")
+    }
+
+    /// A palette color rendered as a CSS `rgba(r, g, b, a)` string, e.g.
+    /// `rgba(16, 24, 32, 0.85)`. Falls back to the opaque hex string if the
+    /// stored value can't be parsed as a hex color.
+    func rgba(_ palette: PaletteDocument?, _ key: String, alpha: Double) -> String {
+        let hex = color(palette, key)
+        guard let rgb = try? RGBColor(hex: hex) else { return hex }
+        return "rgba(\(rgb.red), \(rgb.green), \(rgb.blue), \(String(format: "%g", alpha)))"
     }
 
     var ansiKeys: [String] {
@@ -1365,7 +1394,7 @@ private extension GeneratedAppAdapter {
             "Normal Font": "Menlo-Regular 12",
             // iTerm2 expresses translucency as transparency (0 = opaque),
             // the inverse of the opacity the other terminals use.
-            "Transparency": 1.0 - clampedTerminalOpacity,
+            "Transparency": 1.0 - clampedOpacity,
             "Background Color": try component(try color(palette, "background")),
             "Foreground Color": try component(try color(palette, "foreground")),
             "Cursor Color": try component(try color(palette, "cursor")),
@@ -1684,7 +1713,13 @@ private extension GeneratedAppAdapter {
     }
 
     func discordCSS(_ palette: PaletteDocument?) -> String {
-        """
+        // Background layers are rendered translucent (rgba with the shared
+        // opacity) so Discord's panels are a bit see-through; text and accent
+        // stay fully opaque for legibility. Full see-through to the desktop also
+        // needs Vencord's window-transparency/vibrancy option — macwal can't
+        // toggle that safely, so it's a one-time manual step in Vencord settings.
+        let alpha = clampedOpacity
+        return """
         /**
          * @name macwal
          * @description Generated by macwal.
@@ -1692,8 +1727,11 @@ private extension GeneratedAppAdapter {
         \(genericCSS(palette))
         .theme-dark,
         .theme-light {
-          --background-primary: \(color(palette, "background"));
-          --background-secondary: \(color(palette, "black"));
+          --background-primary: \(rgba(palette, "background", alpha: alpha));
+          --background-secondary: \(rgba(palette, "black", alpha: alpha));
+          --background-secondary-alt: \(rgba(palette, "black", alpha: alpha));
+          --background-tertiary: \(rgba(palette, "black", alpha: alpha));
+          --background-floating: \(rgba(palette, "black", alpha: alpha));
           --text-normal: \(color(palette, "foreground"));
           --interactive-active: \(color(palette, "foreground"));
           --brand-experiment: \(color(palette, "accent"));
@@ -1705,10 +1743,20 @@ private extension GeneratedAppAdapter {
     // Candidate destinations for preview/plannedWrites; apply() only writes to
     // the ones whose client is actually installed.
     private func discordFiles(_ palette: PaletteDocument?) -> [GeneratedFile] {
+        // Mirror applyDiscord: Vencord is always written; Vesktop and
+        // BetterDiscord only when their folders already exist.
         let css = discordCSS(palette)
-        return [
-            GeneratedFile(url: paths.home.appendingPathComponent(".config/Vencord/themes/macwal.css"), content: css),
-            GeneratedFile(url: paths.home.appendingPathComponent("Library/Application Support/BetterDiscord/themes/macwal.theme.css"), content: css)
+        var files: [GeneratedFile] = [
+            GeneratedFile(url: vencordThemesDirectory.appendingPathComponent("macwal.css"), content: css),
+            GeneratedFile(url: vencordSettingsURL, content: settingsEnablingTheme(at: vencordSettingsURL))
         ]
+        if fileSystem.isDirectory(vesktopBaseDirectory) {
+            files.append(GeneratedFile(url: vesktopThemesDirectory.appendingPathComponent("macwal.css"), content: css))
+            files.append(GeneratedFile(url: vesktopSettingsURL, content: settingsEnablingTheme(at: vesktopSettingsURL)))
+        }
+        if fileSystem.isDirectory(betterDiscordThemesDirectory) {
+            files.append(GeneratedFile(url: betterDiscordThemesDirectory.appendingPathComponent("macwal.theme.css"), content: css))
+        }
+        return files
     }
 }

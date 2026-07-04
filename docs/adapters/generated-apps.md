@@ -56,10 +56,12 @@ Targets and writes:
 | `alacritty` | `~/.config/alacritty/macwal.toml` (incl. `[window] opacity`), import in `alacritty.toml` | Apply on config reload or app restart. |
 | `kitty` | `~/.config/kitty/macwal.conf` (incl. `background_opacity`), include in `kitty.conf` | Attempts `kitty @ set-colors --all --configured`. |
 | `wezterm` | `~/.config/wezterm/macwal.lua`; creates `wezterm.lua` (incl. `window_background_opacity`) only if absent | Existing configs are not overwritten; when one exists, macwal reports the `window_background_opacity` line to add. |
-| `ghostty` | `~/.config/ghostty/themes/macwal`, managed `theme = macwal` + `background-opacity` in config | Auto-quits and relaunches Ghostty to load the theme (set `MACWAL_SKIP_RESTART=1` to skip). |
+| `ghostty` | `~/.config/ghostty/themes/macwal`, managed `theme = macwal` + `background-opacity` in config | Recolors open Ghostty windows in place via OSC escape sequences — no restart (set `MACWAL_SKIP_RESTART=1` to skip). New windows also pick up `background-opacity` from config. |
 | `iterm2` | `~/Library/Application Support/iTerm2/DynamicProfiles/macwal.json` (incl. `Transparency`) | iTerm2 loads dynamic profiles automatically; select `macwal` for new sessions. |
 
-All terminal targets (including Terminal.app, whose transparency is the alpha channel of its background color) apply a translucent background controlled by `adapters.terminalOpacity` (default `0.85`; `1.0` = fully opaque). WezTerm color schemes cannot carry window opacity, so translucency only lands when macwal generates the WezTerm config.
+All terminal targets (including Terminal.app, whose transparency is the alpha channel of its background color) apply a translucent background controlled by `adapters.opacity` (default `0.85`; `1.0` = fully opaque). The same setting controls Discord's translucency. WezTerm color schemes cannot carry window opacity, so translucency only lands when macwal generates the WezTerm config.
+
+Terminal.app and Ghostty are recolored **live** rather than restarted: macwal finds each app's open windows (by matching `TERM_PROGRAM` in `ps` output) and writes OSC color escape sequences (`10`/`11`/`12` for foreground/background/cursor and `4;0`–`4;15` for the ANSI palette) to each window's TTY. This changes colors without closing anything; because window opacity is not a color, an already-open window keeps its current opacity until a new window is opened. The live recolor honors `MACWAL_SKIP_RESTART=1`.
 
 ## Editor Targets
 
@@ -134,12 +136,22 @@ Target: `discord`
 Writes:
 
 ```text
-~/.config/Vencord/themes/macwal.css
-~/.config/Vencord/settings/settings.json   (enables macwal.css)
+~/Library/Application Support/Vencord/themes/macwal.css
+~/Library/Application Support/Vencord/settings/settings.json    (enables macwal.css)
+~/Library/Application Support/vesktop/themes/macwal.css          (only when Vesktop is installed)
+~/Library/Application Support/vesktop/settings/settings.json     (only when Vesktop is installed)
 ~/Library/Application Support/BetterDiscord/themes/macwal.theme.css   (only when that folder exists)
 ```
 
-The Vencord theme is always written and enabled in Vencord's `settings.json` (`enabledThemes` includes `macwal.css`). A BetterDiscord theme is written only when the BetterDiscord themes folder already exists. Discord must reload (Cmd+R or restart) for the theme to appear; `macwal` does not force-restart Discord.
+Discord on macOS reads client-mod files from `~/Library/Application Support/`, not the Linux `~/.config/` path. macwal writes the theme for three client mods:
+
+- **Vencord** (injected into the real Discord app): always written and enabled in Vencord's `settings.json` (`enabledThemes` includes `macwal.css`). Harmless if Vencord is not installed yet; active the moment it is.
+- **Vesktop** (a standalone Discord client bundling Vencord): themed and enabled only when its folder already exists.
+- **BetterDiscord**: a `macwal.theme.css` is written only when the BetterDiscord themes folder already exists.
+
+Vanilla Discord with no client mod cannot load custom CSS.
+
+Discord's background layers are rendered translucent using `adapters.opacity` (text and accent colors stay fully opaque). This produces subtle panel translucency inside Discord; full see-through to the desktop additionally requires Vencord's window-transparency/vibrancy option, which is a one-time manual toggle macwal does not change. Discord must reload (Cmd+R or restart) for the theme to appear; `macwal` does not force-restart Discord.
 
 ## Restore
 

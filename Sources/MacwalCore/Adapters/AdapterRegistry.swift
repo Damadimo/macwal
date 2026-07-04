@@ -32,13 +32,13 @@ public struct AdapterRegistry {
             case .shell:
                 return ShellAdapter(paths: paths, fileSystem: fileSystemFor(target: .shell), backupManager: backupManager(for: .shell)).preview()
             case .terminal:
-                return TerminalAdapter(paths: paths, config: config.adapters.terminal, fileSystem: fileSystemFor(target: .terminal), backupManager: backupManager(for: .terminal), commandExecutor: commandExecutor, opacity: config.adapters.terminalOpacity).preview()
+                return TerminalAdapter(paths: paths, config: config.adapters.terminal, fileSystem: fileSystemFor(target: .terminal), backupManager: backupManager(for: .terminal), commandExecutor: commandExecutor, opacity: config.adapters.opacity).preview()
             case .obsidian:
                 return ObsidianAdapter(paths: paths, config: config.adapters.obsidian, fileSystem: fileSystemFor(target: .obsidian), backupManager: backupManager(for: .obsidian)).preview()
             case .chrome:
                 return ChromeAdapter(paths: paths, fileSystem: fileSystemFor(target: .chrome), backupManager: backupManager(for: .chrome)).preview()
             case .firefox, .librewolf, .zen, .floorp, .alacritty, .kitty, .wezterm, .ghostty, .iterm2, .vscode, .zed, .vim, .neovim, .tmux, .starship, .bat, .btop, .yazi, .fzf, .lazygit, .aerospace, .yabai, .sketchybar, .jankyBorders, .hammerspoon, .raycast, .alfred, .discord, .thunderbird, .telegram, .slack:
-                return GeneratedAppAdapter(target: target, paths: paths, fileSystem: fileSystemFor(target: target), backupManager: backupManager(for: target), commandExecutor: commandExecutor, terminalOpacity: config.adapters.terminalOpacity).preview()
+                return GeneratedAppAdapter(target: target, paths: paths, fileSystem: fileSystemFor(target: target), backupManager: backupManager(for: target), commandExecutor: commandExecutor, opacity: config.adapters.opacity).preview()
             case .safari:
                 return AdapterPlan(
                     target: .safari,
@@ -65,13 +65,13 @@ public struct AdapterRegistry {
             case .shell:
                 summaries.append(try ShellAdapter(paths: paths, fileSystem: fileSystemFor(target: .shell), backupManager: backupManager(for: .shell)).apply(palette: palette, dryRun: dryRun))
             case .terminal:
-                summaries.append(try TerminalAdapter(paths: paths, config: config.adapters.terminal, fileSystem: fileSystemFor(target: .terminal), backupManager: backupManager(for: .terminal), commandExecutor: commandExecutor, opacity: config.adapters.terminalOpacity).apply(palette: palette, dryRun: dryRun))
+                summaries.append(try TerminalAdapter(paths: paths, config: config.adapters.terminal, fileSystem: fileSystemFor(target: .terminal), backupManager: backupManager(for: .terminal), commandExecutor: commandExecutor, opacity: config.adapters.opacity).apply(palette: palette, dryRun: dryRun))
             case .obsidian:
                 summaries.append(try ObsidianAdapter(paths: paths, config: config.adapters.obsidian, fileSystem: fileSystemFor(target: .obsidian), backupManager: backupManager(for: .obsidian)).apply(palette: palette, dryRun: dryRun))
             case .chrome:
                 summaries.append(try ChromeAdapter(paths: paths, fileSystem: fileSystemFor(target: .chrome), backupManager: backupManager(for: .chrome)).apply(palette: palette, dryRun: dryRun))
             case .firefox, .librewolf, .zen, .floorp, .alacritty, .kitty, .wezterm, .ghostty, .iterm2, .vscode, .zed, .vim, .neovim, .tmux, .starship, .bat, .btop, .yazi, .fzf, .lazygit, .aerospace, .yabai, .sketchybar, .jankyBorders, .hammerspoon, .raycast, .alfred, .discord, .thunderbird, .telegram, .slack:
-                summaries.append(try GeneratedAppAdapter(target: target, paths: paths, fileSystem: fileSystemFor(target: target), backupManager: backupManager(for: target), commandExecutor: commandExecutor, terminalOpacity: config.adapters.terminalOpacity).apply(palette: palette, dryRun: dryRun))
+                summaries.append(try GeneratedAppAdapter(target: target, paths: paths, fileSystem: fileSystemFor(target: target), backupManager: backupManager(for: target), commandExecutor: commandExecutor, opacity: config.adapters.opacity).apply(palette: palette, dryRun: dryRun))
             case .safari:
                 summaries.append(AdapterApplySummary(
                     target: .safari,
@@ -175,7 +175,10 @@ public struct AdapterRegistry {
         case .alfred:
             return appExists("Alfred") || appExists("Alfred 5")
         case .discord:
-            return appExists("Discord") || dirExists(".config/Vencord/themes") || dirExists("Library/Application Support/BetterDiscord/themes")
+            return appExists("Discord") || appExists("Vesktop")
+                || dirExists("Library/Application Support/Vencord")
+                || dirExists("Library/Application Support/vesktop")
+                || dirExists("Library/Application Support/BetterDiscord/themes")
         case .telegram:
             return appExists("Telegram")
         case .slack:

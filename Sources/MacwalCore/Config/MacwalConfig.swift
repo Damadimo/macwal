@@ -48,9 +48,12 @@ public struct MacwalConfig: Codable, Equatable, Sendable {
         public var spotify: SpotifyConfig
         public var system: SystemConfig
         public var finder: FinderConfig
-        /// Background opacity applied to every generated terminal theme.
-        /// 0.0 = fully transparent, 1.0 = fully opaque. Default is a subtle 0.85.
-        public var terminalOpacity: Double = 0.85
+        /// Background opacity applied wherever macwal generates a translucent
+        /// surface — all terminals (Alacritty, Kitty, WezTerm, Ghostty, iTerm2,
+        /// Terminal.app) and Discord. 0.0 = fully transparent, 1.0 = fully
+        /// opaque. Default is a subtle 0.85. (Apps with no translucency support,
+        /// e.g. browsers and editors, ignore this.)
+        public var opacity: Double = 0.85
     }
 
     public var schemaVersion: Int
@@ -71,30 +74,42 @@ public struct MacwalConfig: Codable, Equatable, Sendable {
                 spotify: SpotifyConfig(enabled: false, spicetifyPath: "spicetify"),
                 system: SystemConfig(setAppearanceMode: false, setAccentColor: false, setHighlightColor: false),
                 finder: FinderConfig(setFolderTint: false, folders: []),
-                terminalOpacity: 0.85
+                opacity: 0.85
             )
         )
     }
 }
 
 extension MacwalConfig.AdapterConfig {
+    // Only stored properties belong here, so the synthesized Encodable stays
+    // valid (it encodes just `opacity`).
     private enum CodingKeys: String, CodingKey {
-        case terminal, obsidian, spotify, system, finder, terminalOpacity
+        case terminal, obsidian, spotify, system, finder, opacity
+    }
+
+    // The earlier, terminal-only name, decoded as an alias from a separate
+    // container so it doesn't need a matching stored property.
+    private enum LegacyKeys: String, CodingKey {
+        case terminalOpacity
     }
 
     // Custom decoding so that config.json files written by earlier versions
-    // (which have no `terminalOpacity` key) still load, defaulting to 0.85.
-    // Declared in an extension to keep the synthesized memberwise init and the
-    // synthesized Encodable conformance.
+    // still load. `opacity` is the current key; `terminalOpacity` is the earlier
+    // name, accepted as an alias. Missing → 0.85. Declared in an extension to
+    // keep the synthesized memberwise init and Encodable conformance.
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        let legacy = try decoder.container(keyedBy: LegacyKeys.self)
+        let opacity = try container.decodeIfPresent(Double.self, forKey: .opacity)
+            ?? legacy.decodeIfPresent(Double.self, forKey: .terminalOpacity)
+            ?? 0.85
         self.init(
             terminal: try container.decode(MacwalConfig.TerminalConfig.self, forKey: .terminal),
             obsidian: try container.decode(MacwalConfig.ObsidianConfig.self, forKey: .obsidian),
             spotify: try container.decode(MacwalConfig.SpotifyConfig.self, forKey: .spotify),
             system: try container.decode(MacwalConfig.SystemConfig.self, forKey: .system),
             finder: try container.decode(MacwalConfig.FinderConfig.self, forKey: .finder),
-            terminalOpacity: try container.decodeIfPresent(Double.self, forKey: .terminalOpacity) ?? 0.85
+            opacity: opacity
         )
     }
 }

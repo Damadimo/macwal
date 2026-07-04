@@ -43,16 +43,16 @@ swift build
 | Target | Classification | Status |
 | --- | --- | --- |
 | `shell` | supported | Generates shell, JSON, CSS, and Xresources files. |
-| `terminal` | supported/private mixed | Generates and installs a translucent `.terminal` profile as the default Terminal profile. |
+| `terminal` | supported/private mixed | Generates and installs a translucent `.terminal` profile as the default Terminal profile, and recolors any open Terminal windows in place (no restart). |
 | `obsidian` | supported app config | Writes and enables CSS snippets in configured vaults. |
 | `chrome` | manual | Generates a Manifest V3 theme folder for manual loading. |
 | `firefox`, `librewolf`, `zen`, `floorp` | supported app config | Writes profile `userChrome.css`, `userContent.css`, and `user.js`: recolors the toolbar chrome and declutters the new tab / home page (hides the logo/wordmark, sponsored shortcuts, Pocket stories, weather, and snippets while keeping the search box and your shortcuts), then auto-quits and relaunches the browser to load it. |
 | `spotify` | external | Generates and applies a Spicetify theme (opt-in via `adapters.spotify.enabled`). |
-| `alacritty`, `kitty`, `wezterm`, `ghostty`, `iterm2` | supported / supported app config | Writes terminal color configuration with a translucent background (`adapters.terminalOpacity`); Kitty live-reloads, Ghostty auto-restarts, iTerm2 sets the profile as default. |
+| `alacritty`, `kitty`, `wezterm`, `ghostty`, `iterm2` | supported / supported app config | Writes terminal color configuration with a translucent background (`adapters.opacity`); Alacritty/Kitty live-reload, Ghostty recolors open windows in place (no restart), iTerm2 sets the profile as default. |
 | `vscode`, `zed`, `vim`, `neovim` | supported / supported app config | Writes editor themes and activates them (VS Code / Zed `settings.json`, `.vimrc`/`init`). |
 | `tmux`, `starship`, `bat`, `btop`, `yazi`, `fzf`, `lazygit` | supported / supported app config | Writes common TUI/CLI theme files and activates them (Starship `palette`, Yazi flavor, bat/btop config) when safe. |
 | `aerospace`, `yabai`, `sketchybar`, `janky-borders`, `hammerspoon` | supported / external | Writes macOS tool color configs; runs available CLI reload/config commands for supported tools. |
-| `discord` | manual | Writes a Vencord theme and enables it in Vencord settings; also writes a BetterDiscord theme when that folder exists. |
+| `discord` | manual | Writes a translucent Vencord theme (`~/Library/Application Support/Vencord/`) and enables it in Vencord settings; also themes Vesktop and BetterDiscord when installed. Requires a client mod — vanilla Discord can't load CSS. |
 | `raycast` | manual | Writes a `.raycasttheme` and imports it when Raycast is running; otherwise import is one manual step. |
 | `alfred`, `telegram`, `slack` | manual | Generates palette/theme assets where stable automatic activation is unavailable. |
 | `thunderbird` | supported app config | Writes Thunderbird profile chrome CSS and `user.js`, then auto-quits and relaunches Thunderbird. |
@@ -91,7 +91,7 @@ For Firefox-family browsers and dotfile-driven terminals/editors, explicit targe
 macwal apply --image /path/to/wallpaper.jpg --targets firefox,kitty,wezterm,vscode,tmux,btop
 ```
 
-Firefox-family browsers, Thunderbird, Terminal.app, and Ghostty load their theme only at startup, so `macwal` **automatically quits and relaunches them** after writing (this can lose open tabs or unsaved state — set `MACWAL_SKIP_RESTART=1` to skip every restart/reload/live-flip). Most terminal/editor targets apply on the next app reload or new session; Kitty, tmux, yabai, sketchybar, janky-borders, and Hammerspoon also attempt their runtime reload command when the tool is available.
+Firefox-family browsers and Thunderbird load their theme only at startup, so `macwal` **automatically quits and relaunches them** after writing (this can lose open tabs or unsaved state — set `MACWAL_SKIP_RESTART=1` to skip every restart/reload/live-flip). **Terminal.app and Ghostty are recolored in place** instead: macwal writes OSC color escape sequences to each open window's TTY, so nothing is closed (only their window opacity waits for a newly opened window). Most other terminal/editor targets apply on the next app reload or new session; Kitty, tmux, yabai, sketchybar, janky-borders, and Hammerspoon also attempt their runtime reload command when the tool is available.
 
 Do not start with `system` or `finder` on a primary account. Those paths use undocumented preferences or extended attributes and require explicit `--allow-private`.
 
@@ -157,7 +157,7 @@ The config file is created at:
 
 Important settings and opt-ins:
 
-- `adapters.terminalOpacity` (default `0.85`) sets the background opacity applied to every generated terminal theme (Alacritty, Kitty, WezTerm, Ghostty, iTerm2, and Terminal.app). Use `1.0` for fully opaque, lower for more translucency. Existing config files without this key keep working and default to `0.85`.
+- `adapters.opacity` (default `0.85`) sets the background opacity applied to every translucent surface macwal generates: all terminal themes (Alacritty, Kitty, WezTerm, Ghostty, iTerm2, and Terminal.app) and Discord's background panels. Use `1.0` for fully opaque, lower for more translucency. Apps without translucency support (browsers, editors) ignore it. Existing config files without this key keep working (the old `terminalOpacity` name is still accepted) and default to `0.85`.
 - Terminal mutates `com.apple.Terminal` preferences when `adapters.terminal.setAsDefault` is true. This is true by default so `apply` visibly updates Terminal without a manual import step.
 - Obsidian writes only to `adapters.obsidian.vaults` and enables the generated `macwal` snippet in each vault's `.obsidian/appearance.json`.
 - Spotify requires `spicetify` on `PATH` or `adapters.spotify.spicetifyPath`.
@@ -281,8 +281,8 @@ The watcher installs `~/Library/LaunchAgents/io.macwal.watch.plist`. It runs `ma
 
 - Safari browser chrome cannot be directly themed.
 - Chrome generated themes cannot be silently activated through supported per-user Chrome APIs.
-- Firefox-family browsers, Thunderbird, Terminal.app, and Ghostty are auto-restarted to apply the theme, which can discard open tabs or unsaved state (`MACWAL_SKIP_RESTART=1` disables this).
+- Firefox-family browsers and Thunderbird are auto-restarted to apply the theme, which can discard open tabs or unsaved state (`MACWAL_SKIP_RESTART=1` disables this). Terminal.app and Ghostty are recolored in place via OSC escape sequences instead of restarting; their window opacity only changes for windows opened afterward.
 - Dock and menu bar system icons cannot be directly recolored.
-- Alfred, Telegram, and Slack do not expose stable user-owned theme dotfiles for silent activation, so macwal generates palette assets only. Raycast is imported when running; Discord is enabled via Vencord.
+- Alfred, Telegram, and Slack do not expose stable user-owned theme dotfiles for silent activation, so macwal generates palette assets only. Raycast is imported when running. Discord is themed through a client mod (Vencord, Vesktop, or BetterDiscord) — vanilla Discord can't load CSS; macwal's translucency is applied in CSS, and full desktop see-through additionally needs Vencord's window-transparency/vibrancy toggle.
 - Finder folder tinting uses Tahoe's colored-tag behavior, not the full Customize Folder payload.
 - Private adapters use undocumented macOS behavior and may change between macOS releases.

@@ -162,10 +162,52 @@ struct MacwalCoreTests {
         #expect(abs(textAlpha - 1.0) < 0.01)
     }
 
-    @Test func configDecodesWithoutTerminalOpacity() throws {
-        // A config.json written before terminalOpacity existed must still load,
-        // defaulting the missing key to 0.85.
-        let json = """
+    @Test func terminalColorSequencesCarryThePalette() throws {
+        let sequences = try #require(TerminalColorSequence.sequences(for: snapshotPalette()))
+        let esc = "\u{1B}"
+        let bel = "\u{07}"
+        // Foreground (10), background (11), cursor (12) specials.
+        #expect(sequences.contains("\(esc)]10;#f6f2ea\(bel)"))
+        #expect(sequences.contains("\(esc)]11;#101820\(bel)"))
+        #expect(sequences.contains("\(esc)]12;#f6f2ea\(bel)"))
+        // ANSI 0 (black) and ANSI 15 (bright white) bracket the 16-color palette.
+        #expect(sequences.contains("\(esc)]4;0;#101820\(bel)"))
+        #expect(sequences.contains("\(esc)]4;15;#ffffff\(bel)"))
+    }
+
+    @Test func liveReloaderParsesTerminalTTYsByTermProgram() throws {
+        // Mimics `ps -A -E -o tty=,command=`: tty first, environment appended.
+        let psOutput = """
+        ttys001 -zsh TERM_PROGRAM=Apple_Terminal SHELL=/bin/zsh
+        ttys002 -zsh TERM_PROGRAM=Apple_Terminal
+        ttys002 vim TERM_PROGRAM=Apple_Terminal
+        ttys003 -zsh TERM_PROGRAM=iTerm.app
+        ??       /path/macwal TERM_PROGRAM=Apple_Terminal
+        ttys009 ghostty-shell TERM_PROGRAM=ghostty
+        """
+        let terminalTTYs = TerminalLiveReloader.parseTTYs(psOutput: psOutput, termProgram: "Apple_Terminal")
+        // ttys001 + ttys002 (deduped), never the iTerm tty or the no-tty (??) row.
+        #expect(terminalTTYs == ["ttys001", "ttys002"])
+
+        let ghosttyTTYs = TerminalLiveReloader.parseTTYs(psOutput: psOutput, termProgram: "ghostty")
+        #expect(ghosttyTTYs == ["ttys009"])
+    }
+
+    @Test func liveReloaderIsNoOpWhenRestartsSkipped() throws {
+        // The MACWAL_SKIP_RESTART gate keeps tests/smoke from writing to real
+        // TTYs, exactly like AppRestarter.
+        let executor = CommandExecutor(environment: ["MACWAL_SKIP_RESTART": "1"])
+        let sequences = try #require(TerminalColorSequence.sequences(for: snapshotPalette()))
+        let message = TerminalLiveReloader(commandExecutor: executor).reload(
+            termProgram: "Apple_Terminal",
+            appName: "Terminal",
+            sequences: sequences
+        )
+        #expect(message.contains("skipped"))
+    }
+
+    private func adapterConfigJSON(opacityLine: String) -> String {
+        """
         {
           "schemaVersion": 1,
           "defaultTargets": ["shell"],
@@ -176,12 +218,31 @@ struct MacwalCoreTests {
             "obsidian": { "vaults": [] },
             "spotify": { "enabled": false, "spicetifyPath": "spicetify" },
             "system": { "setAppearanceMode": false, "setAccentColor": false, "setHighlightColor": false },
-            "finder": { "setFolderTint": false, "folders": [] }
+            "finder": { "setFolderTint": false, "folders": [] }\(opacityLine)
           }
         }
         """
+    }
+
+    @Test func configDecodesWithoutOpacity() throws {
+        // A config.json with no opacity key must still load, defaulting to 0.85.
+        let json = adapterConfigJSON(opacityLine: "")
         let config = try JSONDecoder().decode(MacwalConfig.self, from: Data(json.utf8))
-        #expect(config.adapters.terminalOpacity == 0.85)
+        #expect(config.adapters.opacity == 0.85)
+    }
+
+    @Test func configDecodesLegacyTerminalOpacityAlias() throws {
+        // config.json written before the rename used `terminalOpacity`; it must
+        // still load and populate the new `opacity` field.
+        let json = adapterConfigJSON(opacityLine: ",\n            \"terminalOpacity\": 0.5")
+        let config = try JSONDecoder().decode(MacwalConfig.self, from: Data(json.utf8))
+        #expect(config.adapters.opacity == 0.5)
+    }
+
+    @Test func configDecodesOpacity() throws {
+        let json = adapterConfigJSON(opacityLine: ",\n            \"opacity\": 0.7")
+        let config = try JSONDecoder().decode(MacwalConfig.self, from: Data(json.utf8))
+        #expect(config.adapters.opacity == 0.7)
     }
 
     @Test func obsidianAndSpotifyArtifactsMatchSnapshots() throws {
@@ -413,7 +474,14 @@ struct MacwalCoreTests {
         #expect(try String(contentsOf: home.appendingPathComponent(".hammerspoon/init.lua"), encoding: .utf8).contains("dofile"))
         #expect(try String(contentsOf: home.appendingPathComponent("Library/Application Support/macwal/generated/raycast/colors.json"), encoding: .utf8).contains("\"accent\""))
         #expect(try String(contentsOf: home.appendingPathComponent("Library/Application Support/macwal/generated/alfred/colors.json"), encoding: .utf8).contains("\"accent\""))
-        #expect(try String(contentsOf: home.appendingPathComponent(".config/Vencord/themes/macwal.css"), encoding: .utf8).contains("@name macwal"))
+        let vencordCSS = try String(contentsOf: home.appendingPathComponent("Library/Application Support/Vencord/themes/macwal.css"), encoding: .utf8)
+        #expect(vencordCSS.contains("@name macwal"))
+        // Backgrounds are translucent rgba; foreground text stays opaque hex.
+        #expect(vencordCSS.contains("--background-primary: rgba("))
+        #expect(vencordCSS.contains("--text-normal: #"))
+        // Vencord settings.json enables the theme without a manual toggle.
+        #expect(try String(contentsOf: home.appendingPathComponent("Library/Application Support/Vencord/settings/settings.json"), encoding: .utf8).contains("\"macwal.css\""))
+        #expect(try String(contentsOf: home.appendingPathComponent("Library/Application Support/Vencord/settings/settings.json"), encoding: .utf8).contains("enabledThemes"))
         #expect(try String(contentsOf: home.appendingPathComponent("Library/Application Support/macwal/generated/telegram/colors.json"), encoding: .utf8).contains("\"accent\""))
         #expect(try String(contentsOf: home.appendingPathComponent("Library/Application Support/macwal/generated/slack/colors.json"), encoding: .utf8).contains("\"accent\""))
 
@@ -426,7 +494,7 @@ struct MacwalCoreTests {
         #expect(!FileManager.default.fileExists(atPath: home.appendingPathComponent(".config/alacritty/macwal.toml").path))
         #expect(!FileManager.default.fileExists(atPath: home.appendingPathComponent(".config/kitty/macwal.conf").path))
         #expect(!FileManager.default.fileExists(atPath: home.appendingPathComponent(".config/wezterm/macwal.lua").path))
-        #expect(!FileManager.default.fileExists(atPath: home.appendingPathComponent(".config/Vencord/themes/macwal.css").path))
+        #expect(!FileManager.default.fileExists(atPath: home.appendingPathComponent("Library/Application Support/Vencord/themes/macwal.css").path))
     }
 
     @MainActor

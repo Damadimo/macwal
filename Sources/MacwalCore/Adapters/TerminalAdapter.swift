@@ -66,17 +66,25 @@ public struct TerminalAdapter {
         try backupManager.backupFileBeforeWrite(outputFile, adapter: .terminal, dryRun: false)
         try fileSystem.atomicWrite(data, to: outputFile)
 
-        var messages = ["Terminal profile generated."]
+        var messages: [String]
         if config.setAsDefault {
             try installAsDefault(profile: profile)
-            let restartMessage = AppRestarter(commandExecutor: commandExecutor).restart(
-                appName: "Terminal",
-                processName: "Terminal",
-                selfTermProgram: "Apple_Terminal"
-            )
-            messages = ["Terminal profile generated and installed as the default Terminal profile.", restartMessage]
+            messages = ["Terminal profile generated and installed as the default Terminal profile."]
         } else {
             messages = ["Terminal profile generated. Direct Terminal preference mutation is disabled in config.json."]
+        }
+
+        // Recolor already-open Terminal windows in place with OSC sequences
+        // instead of force-quitting and relaunching Terminal (which would lose
+        // open windows and sessions). New windows pick up the installed profile;
+        // only window opacity waits for a new window, since it is not a color.
+        if let sequences = TerminalColorSequence.sequences(for: palette) {
+            let reload = TerminalLiveReloader(commandExecutor: commandExecutor).reload(
+                termProgram: "Apple_Terminal",
+                appName: "Terminal",
+                sequences: sequences
+            )
+            messages.append(reload)
         }
 
         return AdapterApplySummary(
